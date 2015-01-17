@@ -5,7 +5,7 @@ class Zend_Log_Writer_Stream
 {
     public function __construct($streamOrUrl, $mode = null)
     {
-        $config = whdev::getConfig();
+        $config = dahl_dev::getConfig();
         if ($config->getLogFile()) {
             $streamOrUrl = $config->getLogFile();
         }
