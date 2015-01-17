@@ -14,7 +14,8 @@ class dahl_dev
     public function __construct()
     {
         $this->_initConfig();
-        $this->_initLocal();
+        $this->_readConfigFiles();
+        $this->_initSetup();
     }
 
     static public function getConfig()
@@ -24,30 +25,63 @@ class dahl_dev
 
     protected function _initConfig()
     {
-        $mageRoot = $_SERVER['DOCUMENT_ROOT'];
+        $mageRoot    = $_SERVER['DOCUMENT_ROOT'];
         include($mageRoot . '/app/Mage.php');
         $includePath = get_include_path();
+
         $config = new Varien_Object;
         $config->setMageRoot($mageRoot);
         $config->setDevRoot(DAHL_DEVROOT);
+        $this->_config = $config;
 
         set_include_path($config->getDevRoot() . DS . 'magento' . DS . 'Code'. PS . $includePath);
-        $host = $_SERVER['HTTP_HOST'];
-        $host = explode('.', $host);
-        $host = array_reverse($host);
-
-        if (count($host) > 3) {
-            $config->setProject($host[3]);
-        }
-
-        $this->_config = $config;
     }
 
-    protected function _initLocal()
+    protected function _readConfigFiles()
+    {
+        $config   = $this->_config;
+        $devRoot  = $config->getDevRoot();
+        $mageRoot = $config->getMageRoot();
+
+        if (file_exists($devRoot . '/magento/local.php')) {
+            include($devRoot . '/magento/local.php');
+        }
+        $configFiles = array(
+            $devRoot . '/magento/config.json',
+            $devRoot . '/magneto/local.json',
+            $mageRoot . '/dev/config.json',
+            $mageRoot . '/dev/local.json'
+        );
+
+        foreach ($configFiles as $file) {
+            $config->addData(
+                $this->_readConfigJson($file)
+            );
+        }
+    }
+
+    protected function _readConfigJson($filename)
+    {
+        if (!file_exists($filename)) {
+            return array();
+        }
+
+        $file = file_get_contents($filename);
+        $file = preg_replace('/\s+/', ' ', $file);
+        $config = json_decode($file, true);
+        if (empty($config)) {
+            $config = array();
+        }
+
+        return $config;
+    }
+
+    protected function _initSetup()
     {
         $config = $this->_config;
-        if (file_exists($config->getDevRoot() . '/magento/local.php')) {
-            include($config->getDevRoot() . '/magento/local.php');
+
+        if ($config->getDeveloperMode()) {
+            $_SERVER['MAGE_IS_DEVELOPER_MODE'] = 1;
         }
     }
 }
