@@ -23,6 +23,12 @@ class dahl_dev
         return self::$_instance->_config;
     }
 
+    protected function log($string)
+    {
+        $logFile = $this->_config->getLogFile();
+        file_put_contents($logFile, 'DAHL_DEV: ' . $string . "\n", FILE_APPEND);
+    }
+
     protected function _initConfig()
     {
         $mageRoot    = $_SERVER['DOCUMENT_ROOT'];
@@ -70,6 +76,7 @@ class dahl_dev
         $file = preg_replace('/\s+/', ' ', $file);
         $config = json_decode($file, true);
         if (empty($config)) {
+            $this->log("File \"{$filename}\" is not in a valid json format.");
             $config = array();
         }
 
