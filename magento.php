@@ -89,6 +89,7 @@ class dahl_dev
 
         if ($config->getDeveloperMode()) {
             $_SERVER['MAGE_IS_DEVELOPER_MODE'] = 1;
+            ini_set('display_errors', 1);
         }
     }
 }
