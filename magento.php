@@ -13,7 +13,9 @@ class dahl_dev
 
     public function __construct()
     {
-        $this->_initConfig();
+        if (!$this->_initConfig()) {
+            return;
+        }
         $this->_readConfigFiles();
         $this->_initSetup();
     }
@@ -32,7 +34,11 @@ class dahl_dev
     protected function _initConfig()
     {
         $mageRoot    = $_SERVER['DOCUMENT_ROOT'];
+        if (!file_exists($mageRoot . '/app/Mage.php')) {
+            return false;
+        }
         include($mageRoot . '/app/Mage.php');
+        
         $includePath = get_include_path();
 
         $config = new Varien_Object;
@@ -41,6 +47,8 @@ class dahl_dev
         $this->_config = $config;
 
         set_include_path($config->getDevRoot() . DS . 'magento' . DS . 'Code'. PS . $includePath);
+
+        return true;
     }
 
     protected function _readConfigFiles()
