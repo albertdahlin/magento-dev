@@ -105,8 +105,7 @@ class dahl_dev
     }
 
     /**
-     * Reads Configuration Files and stores the data in the
-     * _config property.
+     * Includes config files.
      * 
      * @access protected
      * @return void
@@ -117,45 +116,18 @@ class dahl_dev
         $devRoot  = $config->getDevRoot();
         $mageRoot = $config->getMageRoot();
 
-        if (file_exists($devRoot . '/magento/local.php')) {
-            include($devRoot . '/magento/local.php');
-        }
         $configFiles = array(
-            $devRoot . '/magento/config.json',
-            $devRoot . '/magneto/local.json',
-            $mageRoot . '/dev/config.json',
-            $mageRoot . '/dev/local.json'
+            $devRoot . '/magento/config.php',
+            $devRoot . '/magneto/local.php',
+            $mageRoot . '/dev/config.php',
+            $mageRoot . '/dev/local.php'
         );
 
-        foreach ($configFiles as $file) {
-            $config->addData(
-                $this->_readConfigJson($file)
-            );
+        foreach ($configFiles as $filename) {
+            if (file_exists($filename)) {
+                include $filename;
+            }
         }
-    }
-
-    /**
-     * Reads and parses a .json file.
-     * 
-     * @param string $filename
-     * @access protected
-     * @return array $config
-     */
-    protected function _readConfigJson($filename)
-    {
-        if (!file_exists($filename)) {
-            return array();
-        }
-
-        $file = file_get_contents($filename);
-        $file = preg_replace('/\s+/', ' ', $file);
-        $config = json_decode($file, true);
-        if (empty($config)) {
-            $this->log("File \"{$filename}\" is not in a valid json format.");
-            $config = array();
-        }
-
-        return $config;
     }
 
     /**
