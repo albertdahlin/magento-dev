@@ -118,7 +118,7 @@ class dahl_dev
 
         $configFiles = array(
             $devRoot . '/magento/config.php',
-            $devRoot . '/magneto/local.php',
+            $devRoot . '/magento/local.php',
             $mageRoot . '/dev/config.php',
             $mageRoot . '/dev/local.php'
         );
