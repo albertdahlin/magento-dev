@@ -75,7 +75,7 @@ class dahl_dev
     protected function log($string)
     {
         $logFile = $this->_config->getLogFile();
-        file_put_contents($logFile, 'DAHL_DEV: ' . $string . "\n", FILE_APPEND);
+        file_put_contents($logFile, 'DAAL_DEV: ' . $string . "\n", FILE_APPEND);
     }
 
     /**
@@ -96,7 +96,7 @@ class dahl_dev
 
         $config = new Varien_Object;
         $config->setMageRoot($mageRoot);
-        $config->setDevRoot(DAHL_DEVROOT);
+        $config->setDevRoot(DAAL_DEVROOT);
         $this->_config = $config;
 
         set_include_path($config->getDevRoot() . DS . 'magento' . DS . 'Code'. PS . $includePath);
