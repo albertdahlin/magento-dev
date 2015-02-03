@@ -118,9 +118,9 @@ class dahl_dev
         $mageRoot = $config->getMageRoot();
 
         $configFiles = array(
-            $devRoot . '/magento/config.php',
+            $devRoot . '/magento/default.php',
             $devRoot . '/magento/local.php',
-            $mageRoot . '/dev/config.php',
+            $mageRoot . '/dev/default.php',
             $mageRoot . '/dev/local.php'
         );
 
@@ -141,7 +141,7 @@ class dahl_dev
     {
         $config = $this->_config;
 
-        if ($config->getDeveloperMode()) {
+        if ($config->getMageDevmode()) {
             $_SERVER['MAGE_IS_DEVELOPER_MODE'] = 1;
             ini_set('display_errors', 1);
         }
