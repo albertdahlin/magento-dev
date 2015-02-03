@@ -5,7 +5,7 @@
  * 
  * @package dahl_dev
  * @copyright Copyright (C) 2015 Albert Dahlin
- * @author Albert Dahlin <info@albertdahlin.com> 
+ * @author Albert Dahlin <info@albertdahlin.com>
  * @license GNU GPL v3.0 <http://www.gnu.org/licenses/gpl-3.0.html>
  */
 class dahl_dev
@@ -17,7 +17,7 @@ class dahl_dev
      * @access protected
      */
     static protected $_instance;
-    
+
     /**
      * Dev configuration data object.
      * 
@@ -75,7 +75,7 @@ class dahl_dev
     protected function log($string)
     {
         $logFile = $this->_config->getLogFile();
-        file_put_contents($logFile, 'DAAL_DEV: ' . $string . "\n", FILE_APPEND);
+        file_put_contents($logFile, 'DAHL_DEV: ' . $string . "\n", FILE_APPEND);
     }
 
     /**
@@ -93,10 +93,11 @@ class dahl_dev
         include($mageRoot . '/app/Mage.php');
         
         $includePath = get_include_path();
+        include DAHL_DEVROOT . DS . 'magento' . DS . 'config.php';
 
-        $config = new Varien_Object;
+        $config = new dahl_dev_config;
         $config->setMageRoot($mageRoot);
-        $config->setDevRoot(DAAL_DEVROOT);
+        $config->setDevRoot(DAHL_DEVROOT);
         $this->_config = $config;
 
         set_include_path($config->getDevRoot() . DS . 'magento' . DS . 'Code'. PS . $includePath);
