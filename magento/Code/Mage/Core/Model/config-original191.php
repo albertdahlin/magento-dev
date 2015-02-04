@@ -786,6 +786,7 @@ class original_mage_core_model_config extends Mage_Core_Model_Config_Base
         // load modules declarations
         foreach ($moduleFiles as $file) {
             $fileConfig->loadFile($file);
+            dahbug::write($fileConfig->getNode()->asNiceXml());
             $unsortedConfig->extend($fileConfig);
         }
 

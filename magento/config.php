@@ -48,16 +48,47 @@ class dahl_dev_config
                 $url = sprintf($this->getModuleUrl(), $path);
             }
 
-            $this->_modules[$path] = array(
-                'path' => $realpath,
-                'url' => $url
-            );
+            $declareFiles = $this->_getDeclareFiles($realpath);
+            if ($declareFiles) {
+                $this->_modules[$path] = array(
+                    'path' => $realpath,
+                    'url' => $url,
+                    'declareFiles' => $declareFiles
+                );
+            }
         }
     }
 
+    /**
+     * Returns modules array.
+     * 
+     * @access public
+     * @return array
+     */
     public function getModules()
     {
         return $this->_modules;
+    }
+
+    /**
+     * Loads module declaration files from etc/modules.
+     * 
+     * @param string $path 
+     * @access public
+     * @return array
+     */
+    public function _getDeclareFiles($path)
+    {
+        $modulesDir = $path . DS . 'app' . DS . 'etc' . DS . 'modules';
+
+        if (is_dir($modulesDir)) {
+            $files = glob($modulesDir . DS . '*.xml');
+            if (count($files)) {
+                return $files;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -160,7 +191,6 @@ class dahl_dev_config
 
             case 'set' :
                 $key = $this->_buildPath(substr($method, 3));
-                dahbug::dump($key);
                 $result = $this->setPath($key, isset($args[0]) ? $args[0] : null);
 
                 return $result;

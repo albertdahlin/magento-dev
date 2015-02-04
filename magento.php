@@ -36,6 +36,7 @@ class dahl_dev
     static public function init()
     {
         self::$_instance = new dahl_dev();
+        dahbug::dump(self::getConfig());
     }
 
     /**
