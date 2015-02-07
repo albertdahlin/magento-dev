@@ -53,7 +53,8 @@ class dahl_dev_config
                 $this->_modules[$path] = array(
                     'path' => $realpath,
                     'url' => $url,
-                    'declareFiles' => $declareFiles
+                    'declareFiles' => $declareFiles,
+                    'code_dir' => $this->_getCodeDir($realpath)
                 );
             }
         }
@@ -71,13 +72,30 @@ class dahl_dev_config
     }
 
     /**
+     * Returns module config data.
+     * 
+     * @param string $key 
+     * @param string $name 
+     * @access public
+     * @return string
+     */
+    public function getModuleData($key, $name)
+    {
+        if (isset($this->_modules[$name], $this->_modules[$name][$key])) {
+            return $this->_modules[$name][$key];
+        }
+
+        return null;
+    }
+
+    /**
      * Loads module declaration files from etc/modules.
      * 
      * @param string $path 
      * @access public
      * @return array
      */
-    public function _getDeclareFiles($path)
+    protected function _getDeclareFiles($path)
     {
         $modulesDir = $path . DS . 'app' . DS . 'etc' . DS . 'modules';
 
@@ -89,6 +107,18 @@ class dahl_dev_config
         }
 
         return null;
+    }
+
+    /**
+     * Returns the code dir.
+     * 
+     * @param string $path 
+     * @access protected
+     * @return string
+     */
+    protected function _getCodeDir($path)
+    {
+        return $path . DS . 'app' . DS . 'code';
     }
 
     /**

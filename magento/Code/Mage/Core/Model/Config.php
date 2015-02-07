@@ -48,6 +48,9 @@ class Mage_Core_Model_Config
         foreach ($devConfig->getModules() as $name => $data) {
             foreach ($data['declareFiles'] as $file) {
                 $fileConfig->loadFile($file);
+                foreach ($fileConfig->getXpath('modules/*') as $module) {
+                    $module->externalModule = $name;
+                }
                 $unsortedConfig->extend($fileConfig);
             }
         }
@@ -96,4 +99,50 @@ class Mage_Core_Model_Config
         return $this;
     }
 
+    /**
+     * Get module directory by directory type
+     *
+     * @param   string $type
+     * @param   string $moduleName
+     * @return  string
+     */
+    public function getModuleDir($type, $moduleName)
+    {
+        $moduleConfig = $this->getModuleConfig($moduleName);
+        $codePool = (string)$moduleConfig->codePool;
+        if (isset($moduleConfig->externalModule)) {
+            $devConfig = dahl_dev::getConfig();
+            $codeDir = $devConfig->getModuleData(
+                'code_dir',
+                (string)$moduleConfig->externalModule
+            );
+        } else {
+            $codeDir = $this->getOptions()->getCodeDir();
+        }
+        $dir = $codeDir.DS.$codePool.DS.uc_words($moduleName, DS);
+
+        switch ($type) {
+            case 'etc':
+                $dir .= DS.'etc';
+                break;
+
+            case 'controllers':
+                $dir .= DS.'controllers';
+                break;
+
+            case 'sql':
+                $dir .= DS.'sql';
+                break;
+            case 'data':
+                $dir .= DS.'data';
+                break;
+
+            case 'locale':
+                $dir .= DS.'locale';
+                break;
+        }
+
+        $dir = str_replace('/', DS, $dir);
+        return $dir;
+    }
 }
