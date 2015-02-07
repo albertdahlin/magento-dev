@@ -16,9 +16,6 @@ class Mage_Core_Model_Config
     public function loadModules()
     {
         parent::loadModules();
-
-        //dahbug::write($this->getNode('modules')->asNiceXml());
-
         return $this;
     }
 
@@ -51,8 +48,6 @@ class Mage_Core_Model_Config
         foreach ($devConfig->getModules() as $name => $data) {
             foreach ($data['declareFiles'] as $file) {
                 $fileConfig->loadFile($file);
-                dahbug::methods($fileConfig);
-                dahbug::write($fileConfig->getNode()->asNiceXml());
                 $unsortedConfig->extend($fileConfig);
             }
         }
