@@ -101,8 +101,26 @@ class dahl_dev
         $this->_config = $config;
 
         set_include_path($config->getDevRoot() . DS . 'magento' . DS . 'Code'. PS . $includePath);
+        spl_autoload_register(array($this, 'autoload'), true, true);
 
         return true;
+    }
+
+    public function autoload($class)
+    {
+        $class = explode(' ', ucwords(str_replace('_', ' ', $class)));
+        if (count($class) > 2) {
+            $moduleName = implode('_', array($class[0], $class[1]));
+            $config = $this->_config;
+            $codeDir = $config->getModuleData($moduleName, 'codeDir');
+            if ($codeDir) {
+                $codePool = $config->getModuleData($moduleName, 'codePool');
+                $classFile = $codeDir . DS . $codePool . DS . implode('/', $class);
+                $classFile .= '.php';
+                return include($classFile);
+            }
+        }
+        return false;
     }
 
     /**

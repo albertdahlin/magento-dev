@@ -45,14 +45,8 @@ class Mage_Core_Model_Config
         }
 
         $devConfig = dahl_dev::getConfig();
-        foreach ($devConfig->getModules() as $name => $data) {
-            foreach ($data['declareFiles'] as $file) {
-                $fileConfig->loadFile($file);
-                foreach ($fileConfig->getXpath('modules/*') as $module) {
-                    $module->externalModule = $name;
-                }
-                $unsortedConfig->extend($fileConfig);
-            }
+        foreach ($devConfig->getModules() as $name => $config) {
+            $unsortedConfig->extend($config);
         }
 
         $moduleDepends = array();
@@ -110,12 +104,8 @@ class Mage_Core_Model_Config
     {
         $moduleConfig = $this->getModuleConfig($moduleName);
         $codePool = (string)$moduleConfig->codePool;
-        if (isset($moduleConfig->externalModule)) {
-            $devConfig = dahl_dev::getConfig();
-            $codeDir = $devConfig->getModuleData(
-                'code_dir',
-                (string)$moduleConfig->externalModule
-            );
+        if (isset($moduleConfig->codeDir)) {
+            $codeDir = (string)$moduleConfig->codeDir;
         } else {
             $codeDir = $this->getOptions()->getCodeDir();
         }

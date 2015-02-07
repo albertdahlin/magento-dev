@@ -49,13 +49,16 @@ class dahl_dev_config
             }
 
             $declareFiles = $this->_getDeclareFiles($realpath);
-            if ($declareFiles) {
-                $this->_modules[$path] = array(
-                    'path' => $realpath,
-                    'url' => $url,
-                    'declareFiles' => $declareFiles,
-                    'code_dir' => $this->_getCodeDir($realpath)
-                );
+            foreach ($declareFiles as $file) {
+                $fileConfig = new Mage_Core_Model_Config_Base();
+                $fileConfig->loadFile($file);
+                foreach ($fileConfig->getXpath('modules/*') as $module) {
+                    $module->externalModule = true;
+                    $module->rootDir = $realpath;
+                    $module->url = $url;
+                    $this->_initCodeDir($module);
+                    $this->_modules[$module->getName()] = $fileConfig;
+                }
             }
         }
     }
@@ -79,10 +82,19 @@ class dahl_dev_config
      * @access public
      * @return string
      */
-    public function getModuleData($key, $name)
+    public function getModule($name)
     {
-        if (isset($this->_modules[$name], $this->_modules[$name][$key])) {
-            return $this->_modules[$name][$key];
+        if (isset($this->_modules[$name])) {
+            return $this->_modules[$name];
+        }
+
+        return null;
+    }
+
+    public function getModuleData($name, $key)
+    {
+        if (isset($this->_modules[$name])) {
+            return (string)$this->_modules[$name]->getNode("modules/$name/$key");
         }
 
         return null;
@@ -116,9 +128,11 @@ class dahl_dev_config
      * @access protected
      * @return string
      */
-    protected function _getCodeDir($path)
+    protected function _initCodeDir($module)
     {
-        return $path . DS . 'app' . DS . 'code';
+        $root       = (string)$module->rootDir;
+        $moduleName = $module->getName();
+        $module->codeDir = $root . DS . 'app' . DS . 'code';
     }
 
     /**
