@@ -106,6 +106,13 @@ class dahl_dev
         return true;
     }
 
+    /**
+     * Autoload function for external modules.
+     * 
+     * @param string $class 
+     * @access public
+     * @return boolean
+     */
     public function autoload($class)
     {
         $class = explode(' ', ucwords(str_replace('_', ' ', $class)));
