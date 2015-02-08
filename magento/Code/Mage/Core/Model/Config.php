@@ -135,4 +135,17 @@ class Mage_Core_Model_Config
         $dir = str_replace('/', DS, $dir);
         return $dir;
     }
+
+    /**
+     * Retrieve block class name
+     *
+     * @param   string $blockType
+     * @return  string
+     */
+    public function getBlockClassName($blockType)
+    {
+        $blockClass = parent::getBlockClassName($blockType);
+        class_exists($blockClass);
+        return $blockClass;
+    }
 }
