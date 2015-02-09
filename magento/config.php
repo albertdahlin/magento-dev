@@ -27,6 +27,14 @@ class dahl_dev_config
     protected $_modules = array();
 
     /**
+     * Holds external template and layout files.
+     * 
+     * @var array
+     * @access protected
+     */
+    protected $_designFiles = array();
+
+    /**
      * Load an external module.
      * 
      * @param string $path  The path to the module root.
@@ -34,7 +42,7 @@ class dahl_dev_config
      * @access public
      * @return void
      */
-    public function loadModule($path, $url = null)
+    public function loadExternal($path, $skinUrl = null)
     {
         if (is_dir($path)) {
             $realpath = $path;
@@ -44,7 +52,8 @@ class dahl_dev_config
             $realpath = realpath($this->getModulePath() . '/' . $path);
         }
         if (is_dir($realpath)) {
-            if (!$url) {
+            $this->_collectDesignFiles($realpath);
+            if (!$skinUrl) {
                 $url = sprintf($this->getModuleUrl(), $path);
             }
 
@@ -55,10 +64,30 @@ class dahl_dev_config
                 foreach ($fileConfig->getXpath('modules/*') as $module) {
                     $module->externalModule = true;
                     $module->rootDir = $realpath;
-                    $module->url = $url;
+                    $module->url = $skinUrl;
                     $this->_initCodeDir($module);
                     $this->_modules[$module->getName()] = $fileConfig;
                 }
+            }
+        }
+    }
+
+    /**
+     * Collects files from external directorys.
+     * 
+     * @param string $rootPath 
+     * @access protected
+     * @return void
+     */
+    protected function _collectDesignFiles($rootPath)
+    {
+        $designDir      = $rootPath . DS . 'app' . DS . 'design' . DS;
+        $dirIterator    = new RecursiveDirectoryIterator($designDir);
+        $iterator       = new RecursiveIteratorIterator($dirIterator);
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $path = substr($file->getPathname(), strlen($designDir));
+                $this->_designFiles[$path] = $file->getPathname();
             }
         }
     }
@@ -91,6 +120,14 @@ class dahl_dev_config
         return null;
     }
 
+    /**
+     * Returns module config data.
+     * 
+     * @param string $name 
+     * @param string $key 
+     * @access public
+     * @return void
+     */
     public function getModuleData($name, $key)
     {
         if (isset($this->_modules[$name])) {
@@ -133,6 +170,40 @@ class dahl_dev_config
         $root       = (string)$module->rootDir;
         $moduleName = $module->getName();
         $module->codeDir = $root . DS . 'app' . DS . 'code';
+    }
+
+    /**
+     * Renders a template, skin or layout file.
+     * 
+     * @param string $file 
+     * @param array $params 
+     * @access public
+     * @return string
+     */
+    public function renderFilename($file, $params)
+    {
+        $path   = $params['_area'] . DS 
+                . $params['_package'] . DS 
+                . $params['_theme'] . DS 
+                . $params['_type'] . DS 
+                . $file;
+
+        $dir = null;
+        switch ($params['_type']) {
+            case 'skin':
+                break;
+
+            case 'locale':
+                break;
+
+            default:
+                if (isset($this->_designFiles[$path])) {
+                    $dir = $this->_designFiles[$path];
+                }
+                break;
+        }
+
+        return $dir;
     }
 
     /**
