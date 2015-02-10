@@ -182,10 +182,10 @@ class dahl_dev_config
      */
     public function renderFilename($file, $params)
     {
-        $path   = $params['_area'] . DS
-                . $params['_package'] . DS
-                . $params['_theme'] . DS
-                . $params['_type'] . DS
+        $path   = isset($params['_area'])    ? $params['_area'] . DS    : ''
+                . isset($params['_package']) ? $params['_package'] . DS : ''
+                . isset($params['_theme'])   ? $params['_theme'] . DS   : ''
+                . isset($params['_type'])    ? $params['_type'] . DS    : ''
                 . $file;
 
         $dir = null;
