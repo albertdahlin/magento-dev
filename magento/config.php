@@ -196,6 +196,25 @@ class dahl_dev_config
             case 'locale':
                 break;
 
+            case 'template':
+                if (isset($this->_designFiles[$path])) {
+                    $magePath       = explode(DS, Mage::getBaseDir('design'));
+                    $templatePath   = explode(DS, $this->_designFiles[$path]);
+                    $count          = count($magePath);
+
+                    for ($i = 0; $i < $count; $i++) {
+                        if ($magePath[$i]) {
+                            if (isset($templatePath[$i])) {
+                                if ($magePath[$i] !== $templatePath[$i]) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    $dir = str_repeat('../', $count - $i);
+                    $dir .= implode(DS, array_splice($templatePath, $i));
+                }
+                break;
             default:
                 if (isset($this->_designFiles[$path])) {
                     $dir = $this->_designFiles[$path];
