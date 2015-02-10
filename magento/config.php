@@ -32,7 +32,7 @@ class dahl_dev_config
      * @var array
      * @access protected
      */
-    protected $_designFiles = array();
+    protected $_staticFiles = array();
 
     /**
      * Load an external module.
@@ -52,10 +52,10 @@ class dahl_dev_config
             $realpath = realpath($this->getModulePath() . '/' . $path);
         }
         if (is_dir($realpath)) {
-            $this->_collectDesignFiles($realpath);
             if (!$skinUrl) {
                 $url = sprintf($this->getModuleUrl(), $path);
             }
+            $this->_collectStaticFiles($realpath, $url);
 
             $declareFiles = $this->_getDeclareFiles($realpath);
             foreach ($declareFiles as $file) {
@@ -79,15 +79,25 @@ class dahl_dev_config
      * @access protected
      * @return void
      */
-    protected function _collectDesignFiles($rootPath)
+    protected function _collectStaticFiles($rootPath, $url)
     {
-        $designDir      = $rootPath . DS . 'app' . DS . 'design' . DS;
-        $dirIterator    = new RecursiveDirectoryIterator($designDir);
+        $design = $rootPath . DS . 'app' . DS . 'design' . DS;
+        $js     = $rootPath . DS . 'js' . DS;
+        $skin   = $rootPath . DS . 'skin' . DS;
+
+        $this->_collectAllFiles($design, 'design', $design);
+        $this->_collectAllFiles($js, 'js', $url . '/js/');
+        $this->_collectAllFiles($skin, 'skin', $url . '/skin/');
+    }
+
+    protected function _collectAllFiles($dir, $key, $target)
+    {
+        $dirIterator    = new RecursiveDirectoryIterator($dir);
         $iterator       = new RecursiveIteratorIterator($dirIterator);
         foreach ($iterator as $file) {
             if ($file->isFile()) {
-                $path = substr($file->getPathname(), strlen($designDir));
-                $this->_designFiles[$path] = $file->getPathname();
+                $path = substr($file->getPathname(), strlen($dir));
+                $this->_staticFiles[$key][$path] = $target . $path;
             }
         }
     }
@@ -172,6 +182,29 @@ class dahl_dev_config
         $module->codeDir = $root . DS . 'app' . DS . 'code';
     }
 
+    public function renderJsUrl($file)
+    {
+        if (isset($this->_staticFiles['js'][$file])) {
+            return $this->_staticFiles['js'][$file];
+        }
+
+        return null;
+    }
+
+    public function renderSkinUrl($file, $params)
+    {
+        $path   = (isset($params['_area'])    ? $params['_area'] . DS    : '')
+                . (isset($params['_package']) ? $params['_package'] . DS : '')
+                . (isset($params['_theme'])   ? $params['_theme'] . DS   : '')
+                . $file;
+
+        if (isset($this->_staticFiles['skin'][$path])) {
+            return $this->_staticFiles['skin'][$path];
+        }
+
+        return null;
+    }
+
     /**
      * Renders a template, skin or layout file.
      * 
@@ -191,15 +224,22 @@ class dahl_dev_config
         $dir = null;
         switch ($params['_type']) {
             case 'skin':
+                $path   = (isset($params['_area'])    ? $params['_area'] . DS    : '')
+                        . (isset($params['_package']) ? $params['_package'] . DS : '')
+                        . (isset($params['_theme'])   ? $params['_theme'] . DS   : '')
+                        . $file;
+                if (isset($this->_staticFiles['skin'][$path])) {
+                    $dir = 1;
+                }
                 break;
 
             case 'locale':
                 break;
 
             case 'template':
-                if (isset($this->_designFiles[$path])) {
+                if (isset($this->_staticFiles['design'][$path])) {
                     $magePath       = explode(DS, Mage::getBaseDir('design'));
-                    $templatePath   = explode(DS, $this->_designFiles[$path]);
+                    $templatePath   = explode(DS, $this->_staticFiles['design'][$path]);
                     $count          = count($magePath);
 
                     for ($i = 0; $i < $count; $i++) {
@@ -216,8 +256,8 @@ class dahl_dev_config
                 }
                 break;
             default:
-                if (isset($this->_designFiles[$path])) {
-                    $dir = $this->_designFiles[$path];
+                if (isset($this->_staticFiles['design'][$path])) {
+                    $dir = $this->_staticFiles['design'][$path];
                 }
                 break;
         }

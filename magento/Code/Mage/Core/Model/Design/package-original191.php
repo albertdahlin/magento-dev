@@ -348,6 +348,7 @@ class original_mage_core_model_design_package
         $this->updateParamDefaults($params);
         $baseUrl = Mage::getBaseUrl('skin', isset($params['_secure'])?(bool)$params['_secure']:null)
             .$params['_area'].'/'.$params['_package'].'/'.$params['_theme'].'/';
+
         return $baseUrl;
     }
 
