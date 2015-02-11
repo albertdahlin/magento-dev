@@ -50,15 +50,28 @@ class Mage_Core_Model_Design_Package
         }
         $this->updateParamDefaults($params);
 
+        /**
+         * 1.7 fix
+         */
+        if (isset($this->_fallback)) {
+            $fallback = $this->_fallback->getFallbackScheme(
+                $params['_area'],
+                $params['_package'],
+                $params['_theme']
+            );
+        } else {
+            $fallback = array(
+                array(),
+                array('_theme' => $this->getFallbackTheme()),
+                array('_theme' => self::DEFAULT_THEME),
+            );
+        }
+
         if (!empty($file)) {
             $result = $this->_fallback(
                 $file,
                 $params,
-                $this->_fallback->getFallbackScheme(
-                    $params['_area'],
-                    $params['_package'],
-                    $params['_theme']
-                )
+                $fallback
             );
             if ($result === 1) {
                 return dahl_dev::getConfig()->renderSkinUrl($file, $params);
