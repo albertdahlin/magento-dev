@@ -5,7 +5,7 @@
  * 
  * @package dahl_dev
  * @copyright Copyright (C) 2015 Albert Dahlin
- * @author Albert Dahlin <info@albertdahlin.com> 
+ * @author Albert Dahlin <info@albertdahlin.com>
  * @license GNU GPL v3.0 <http://www.gnu.org/licenses/gpl-3.0.html>
  */
 class dahl_dev
@@ -17,7 +17,7 @@ class dahl_dev
      * @access protected
      */
     static protected $_instance;
-    
+
     /**
      * Dev configuration data object.
      * 
@@ -93,15 +93,41 @@ class dahl_dev
         include($mageRoot . '/app/Mage.php');
         
         $includePath = get_include_path();
+        include DAHL_DEVROOT . DS . 'magento' . DS . 'config.php';
 
-        $config = new Varien_Object;
+        $config = new dahl_dev_config;
         $config->setMageRoot($mageRoot);
         $config->setDevRoot(DAHL_DEVROOT);
         $this->_config = $config;
 
         set_include_path($config->getDevRoot() . DS . 'magento' . DS . 'Code'. PS . $includePath);
+        spl_autoload_register(array($this, 'autoload'), true, true);
 
         return true;
+    }
+
+    /**
+     * Autoload function for external modules.
+     * 
+     * @param string $class 
+     * @access public
+     * @return boolean
+     */
+    public function autoload($class)
+    {
+        $class = explode(' ', ucwords(str_replace('_', ' ', $class)));
+        if (count($class) > 2) {
+            $moduleName = implode('_', array($class[0], $class[1]));
+            $config = $this->_config;
+            $codeDir = $config->getModuleData($moduleName, 'codeDir');
+            if ($codeDir) {
+                $codePool = $config->getModuleData($moduleName, 'codePool');
+                $classFile = $codeDir . DS . $codePool . DS . implode('/', $class);
+                $classFile .= '.php';
+                return include($classFile);
+            }
+        }
+        return false;
     }
 
     /**
@@ -117,9 +143,9 @@ class dahl_dev
         $mageRoot = $config->getMageRoot();
 
         $configFiles = array(
-            $devRoot . '/magento/config.php',
+            $devRoot . '/magento/default.php',
             $devRoot . '/magento/local.php',
-            $mageRoot . '/dev/config.php',
+            $mageRoot . '/dev/default.php',
             $mageRoot . '/dev/local.php'
         );
 
@@ -140,7 +166,7 @@ class dahl_dev
     {
         $config = $this->_config;
 
-        if ($config->getDeveloperMode()) {
+        if ($config->getMageDevmode()) {
             $_SERVER['MAGE_IS_DEVELOPER_MODE'] = 1;
             ini_set('display_errors', 1);
         }

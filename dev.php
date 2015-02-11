@@ -14,5 +14,5 @@ if (file_exists(DAHL_DEVROOT . '/local.php')) {
 if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/app/Mage.php')) {
     include(DAHL_DEVROOT . '/magento.php');
 } else {
-    include(dirname(__file__) . '/default.php');
+    include(DAHL_DEVROOT . '/default.php');
 }
