@@ -92,6 +92,9 @@ class dahl_dev_config
 
     protected function _collectAllFiles($dir, $key, $target)
     {
+        if (!is_dir($dir)) {
+            return;
+        }
         $dirIterator    = new RecursiveDirectoryIterator($dir);
         $iterator       = new RecursiveIteratorIterator($dirIterator);
         foreach ($iterator as $file) {
