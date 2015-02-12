@@ -49,7 +49,7 @@ class dahl_dev_config
             $path = explode('/', $path);
             $path = end($path);
         } else {
-            $realpath = realpath($this->getModulePath() . '/' . $path);
+            $realpath = realpath($this->getModulePath() . DS . $path);
         }
         if (is_dir($realpath)) {
             if (!$skinUrl) {
