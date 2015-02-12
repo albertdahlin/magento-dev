@@ -19,7 +19,7 @@ class dahl_dev_config
     static protected $_pathCache = array();
 
     /**
-     * Holds external modules.
+     * Holds external modules configuration.
      * 
      * @var array
      * @access protected
@@ -27,7 +27,7 @@ class dahl_dev_config
     protected $_modules = array();
 
     /**
-     * Holds external template and layout files.
+     * Holds external static files (template, layout, skin, js).
      * 
      * @var array
      * @access protected
@@ -35,9 +35,9 @@ class dahl_dev_config
     protected $_staticFiles = array();
 
     /**
-     * Load an external module.
+     * Load external resources.
      * 
-     * @param string $path  The path to the module root.
+     * @param string $path  The path to the root where files are located.
      * @param stirng $url   An url from where static files can be loaded.
      * @access public
      * @return void
@@ -75,21 +75,33 @@ class dahl_dev_config
     /**
      * Collects files from external directorys.
      * 
-     * @param string $rootPath 
+     * @param string $rootPath
      * @access protected
      * @return void
      */
     protected function _collectStaticFiles($rootPath, $url)
     {
         $design = $rootPath . DS . 'app' . DS . 'design' . DS;
+        $locale = $rootPath . DS . 'app' . DS . 'locale' . DS;
         $js     = $rootPath . DS . 'js' . DS;
         $skin   = $rootPath . DS . 'skin' . DS;
 
         $this->_collectAllFiles($design, 'design', $design);
+        $this->_collectAllFiles($locale, 'locale', $locale);
         $this->_collectAllFiles($js, 'js', $url . '/js/');
         $this->_collectAllFiles($skin, 'skin', $url . '/skin/');
     }
 
+    /**
+     * Creates a lookup table for static files by recusivly collecing
+     * all files from a directory and storing them in $_staticFiles.
+     * 
+     * @param string $dir    The dir from where to start collecting.
+     * @param string $key    A identifier key.
+     * @param string $target The target path or url.
+     * @access protected
+     * @return void
+     */
     protected function _collectAllFiles($dir, $key, $target)
     {
         if (!is_dir($dir)) {
@@ -106,7 +118,7 @@ class dahl_dev_config
     }
 
     /**
-     * Returns modules array.
+     * Returns the modules configuration array.
      * 
      * @access public
      * @return array
@@ -117,12 +129,12 @@ class dahl_dev_config
     }
 
     /**
-     * Returns module config data.
+     * Returns one module's config.
      * 
-     * @param string $key 
-     * @param string $name 
+     * @param string $key
+     * @param string $name
      * @access public
-     * @return string
+     * @return Mage_Core_Model_Config_Base
      */
     public function getModule($name)
     {
@@ -134,12 +146,12 @@ class dahl_dev_config
     }
 
     /**
-     * Returns module config data.
+     * Returns config data from a module.
      * 
-     * @param string $name 
-     * @param string $key 
+     * @param string $name
+     * @param string $key
      * @access public
-     * @return void
+     * @return string
      */
     public function getModuleData($name, $key)
     {
@@ -151,9 +163,9 @@ class dahl_dev_config
     }
 
     /**
-     * Loads module declaration files from etc/modules.
+     * Collects module declaration files from etc/modules.
      * 
-     * @param string $path 
+     * @param string $path
      * @access public
      * @return array
      */
@@ -174,17 +186,23 @@ class dahl_dev_config
     /**
      * Returns the code dir.
      * 
-     * @param string $path 
+     * @param string $path
      * @access protected
      * @return string
      */
     protected function _initCodeDir($module)
     {
-        $root       = (string)$module->rootDir;
-        $moduleName = $module->getName();
+        $root            = (string)$module->rootDir;
         $module->codeDir = $root . DS . 'app' . DS . 'code';
     }
 
+    /**
+     * Returns an url to an external js file.
+     * 
+     * @param string $file
+     * @access public
+     * @return string
+     */
     public function renderJsUrl($file)
     {
         if (isset($this->_staticFiles['js'][$file])) {
@@ -194,6 +212,14 @@ class dahl_dev_config
         return null;
     }
 
+    /**
+     * Returns a skin url to an external skin file.
+     * 
+     * @param mixed $file
+     * @param mixed $params
+     * @access public
+     * @return void
+     */
     public function renderSkinUrl($file, $params)
     {
         $path   = (isset($params['_area'])    ? $params['_area'] . DS    : '')
@@ -211,8 +237,8 @@ class dahl_dev_config
     /**
      * Renders a template, skin or layout file.
      * 
-     * @param string $file 
-     * @param array $params 
+     * @param string $file
+     * @param array $params
      * @access public
      * @return string
      */
