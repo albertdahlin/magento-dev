@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * Load correct version of core files.
+ */
 $versionInfo = Mage::getVersionInfo();
 if ($versionInfo['major'] == 1) {
     switch ($versionInfo['minor']) {
@@ -12,6 +15,7 @@ if ($versionInfo['major'] == 1) {
             break;
     }
 }
+
 class Mage_Core_Model_Design_Package
  extends original_mage_core_model_design_package
 {
