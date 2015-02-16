@@ -16,7 +16,19 @@ if (file_exists(buildPath(DAHL_DEVROOT, 'local.php'))) {
 /**
  * Check if the request is for a Magento site.
  */
-if (file_exists(buildPath($_SERVER['DOCUMENT_ROOT'], 'app', 'Mage.php'))) {
+if (isset($_SERVER['DOCUMENT_ROOT'])) {
+    if (file_exists(buildPath($_SERVER['DOCUMENT_ROOT'], 'app', 'Mage.php'))) {
+        define('DAHL_MAGEROOT', $_SERVER['DOCUMENT_ROOT']);
+    }
+}
+if (isset($_SERVER['PWD']) && !defined('DAHL_MAGEROOT')) {
+    if (file_exists(buildPath($_SERVER['PWD'], 'app', 'Mage.php'))) {
+        define('DAHL_MAGEROOT', $_SERVER['PWD']);
+    } else if (file_exists(buildPath(dirname($_SERVER['PWD']), 'app', 'Mage.php'))) {
+        define('DAHL_MAGEROOT', dirname($_SERVER['PWD']));
+    }
+}
+if (defined('DAHL_MAGEROOT')) {
     include buildPath(DAHL_DEVROOT, 'magento.php');
 } else {
     include buildPath(DAHL_DEVROOT, 'default.php');

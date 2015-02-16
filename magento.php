@@ -86,7 +86,7 @@ class dahl_dev
      */
     protected function _initConfig()
     {
-        $mageRoot    = $_SERVER['DOCUMENT_ROOT'];
+        $mageRoot    = DAHL_MAGEROOT;
         $mageFile    = buildPath($mageRoot, 'app', 'Mage.php');
         if (!file_exists($mageFile)) {
             return false;
