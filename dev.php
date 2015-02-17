@@ -12,6 +12,10 @@ if (file_exists(buildPath(DAHL_DEVROOT, 'local.php'))) {
     include buildPath(DAHL_DEVROOT, 'local.php');
 }
 
+/**
+ * Load external libs.
+ */
+include 'lib.php';
 
 /**
  * Check if the request is for a Magento site.
@@ -28,8 +32,10 @@ if (isset($_SERVER['PWD']) && !defined('DAHL_MAGEROOT')) {
         define('DAHL_MAGEROOT', dirname($_SERVER['PWD']));
     }
 }
+
 if (defined('DAHL_MAGEROOT')) {
     include buildPath(DAHL_DEVROOT, 'magento.php');
 } else {
     include buildPath(DAHL_DEVROOT, 'default.php');
 }
+
