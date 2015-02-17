@@ -1,0 +1,3 @@
+[submodule "lib/PhpTerm"]
+	path = lib/PhpTerm
+	url = git@github.com:albertdahlin/PhpTerm.git
