@@ -174,6 +174,8 @@ class dahl_dev
         if ($config->getMageDevmode()) {
             $_SERVER['MAGE_IS_DEVELOPER_MODE'] = 1;
             ini_set('display_errors', 1);
+        } else {
+            unset($_SERVER['MAGE_IS_DEVELOPER_MODE']);
         }
     }
 }
