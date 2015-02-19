@@ -1,6 +1,8 @@
 <?php
 define('DAHL_DEVROOT', dirname(__file__));
-
+if (strpos($_SERVER['SCRIPT_NAME'], 'composer') !== false) {
+    return;
+}
 function buildPath() {
     $args = func_get_args();
     return implode(DIRECTORY_SEPARATOR, $args);
@@ -11,7 +13,6 @@ function buildPath() {
 if (file_exists(buildPath(DAHL_DEVROOT, 'local.php'))) {
     include buildPath(DAHL_DEVROOT, 'local.php');
 }
-
 /**
  * Load external libs.
  */
