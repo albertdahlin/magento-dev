@@ -6,4 +6,4 @@ while [ -h "$SOURCE" ]; do
     DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 done
 
-/usr/bin/php -f ${DIR}/mage.php
+/usr/bin/php -f ${DIR}/MageTools.php

@@ -57,7 +57,7 @@ class MageTools
      */
     static protected function _init()
     {
-        include_once buildPath(dirname(__file__), 'mage', 'Interface.php');
+        include_once buildPath(dirname(__file__), 'MageTools', 'Interface.php');
     }
 
     /**
@@ -69,7 +69,7 @@ class MageTools
      */
     static protected function _getClasses()
     {
-        $files   = glob(dirname(__file__) . '/mage/*');
+        $files   = glob(buildPath(dirname(__file__), 'MageTools', '*'));
         $classes = array();
         $isMage  = defined('DAHL_MAGEROOT');
 
