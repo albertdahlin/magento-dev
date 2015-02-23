@@ -13,10 +13,6 @@ function buildPath() {
 if (file_exists(buildPath(DAHL_DEVROOT, 'local.php'))) {
     include buildPath(DAHL_DEVROOT, 'local.php');
 }
-/**
- * Load external libs.
- */
-include 'lib.php';
 
 /**
  * Check if the request is for a Magento site.
