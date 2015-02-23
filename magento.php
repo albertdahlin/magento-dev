@@ -68,7 +68,7 @@ class dahl_dev
     /**
      * Writes a log message to the log file.
      * 
-     * @param string $string 
+     * @param string $string
      * @access protected
      * @return void
      */
@@ -86,21 +86,23 @@ class dahl_dev
      */
     protected function _initConfig()
     {
-        $mageRoot    = $_SERVER['DOCUMENT_ROOT'];
-        if (!file_exists($mageRoot . '/app/Mage.php')) {
+        $mageRoot    = DAHL_MAGEROOT;
+        $mageFile    = buildPath($mageRoot, 'app', 'Mage.php');
+        if (!file_exists($mageFile)) {
             return false;
         }
-        include($mageRoot . '/app/Mage.php');
-        
-        $includePath = get_include_path();
-        include DAHL_DEVROOT . DS . 'magento' . DS . 'config.php';
+        require_once $mageFile;
+
+        include buildPath(DAHL_DEVROOT, 'magento', 'config.php');
 
         $config = new dahl_dev_config;
         $config->setMageRoot($mageRoot);
         $config->setDevRoot(DAHL_DEVROOT);
         $this->_config = $config;
 
-        set_include_path($config->getDevRoot() . DS . 'magento' . DS . 'Code'. PS . $includePath);
+        $includePath = get_include_path();
+        $includePath = buildPath($config->getDevRoot(), 'magento', 'Code') . PS . $includePath;
+        set_include_path($includePath);
         spl_autoload_register(array($this, 'autoload'), true, true);
 
         return true;
@@ -109,7 +111,7 @@ class dahl_dev
     /**
      * Autoload function for external modules.
      * 
-     * @param string $class 
+     * @param string $class
      * @access public
      * @return boolean
      */
@@ -118,15 +120,18 @@ class dahl_dev
         $class = explode(' ', ucwords(str_replace('_', ' ', $class)));
         if (count($class) > 2) {
             $moduleName = implode('_', array($class[0], $class[1]));
-            $config = $this->_config;
-            $codeDir = $config->getModuleData($moduleName, 'codeDir');
+            $config     = $this->_config;
+            $codeDir    = $config->getModuleData($moduleName, 'codeDir');
+
             if ($codeDir) {
-                $codePool = $config->getModuleData($moduleName, 'codePool');
-                $classFile = $codeDir . DS . $codePool . DS . implode('/', $class);
+                $codePool  = $config->getModuleData($moduleName, 'codePool');
+                $classFile = $codeDir . DS . $codePool . DS . implode(DS, $class);
                 $classFile .= '.php';
+
                 return include($classFile);
             }
         }
+
         return false;
     }
 
@@ -143,10 +148,10 @@ class dahl_dev
         $mageRoot = $config->getMageRoot();
 
         $configFiles = array(
-            $devRoot . '/magento/default.php',
-            $devRoot . '/magento/local.php',
-            $mageRoot . '/dev/default.php',
-            $mageRoot . '/dev/local.php'
+            buildPath($devRoot, 'magento', 'default.php'),
+            buildPath($devRoot, 'magento', 'local.php'),
+            buildPath($mageRoot, 'dev', 'default.php'),
+            buildPath($mageRoot, 'dev', 'local.php')
         );
 
         foreach ($configFiles as $filename) {
@@ -169,6 +174,8 @@ class dahl_dev
         if ($config->getMageDevmode()) {
             $_SERVER['MAGE_IS_DEVELOPER_MODE'] = 1;
             ini_set('display_errors', 1);
+        } else {
+            unset($_SERVER['MAGE_IS_DEVELOPER_MODE']);
         }
     }
 }
