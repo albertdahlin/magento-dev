@@ -32,7 +32,15 @@ class dahl_dev_config
      * @var array
      * @access protected
      */
-    protected $_staticFiles = array();
+    protected $_staticFilesUrl = array();
+
+    /**
+     * Holds external static files (template, layout, skin, js).
+     * 
+     * @var array
+     * @access protected
+     */
+    protected $_staticFilesPath = array();
 
     /**
      * Load external resources.
@@ -88,8 +96,11 @@ class dahl_dev_config
 
         $this->_collectAllFiles($design, 'design', $design);
         $this->_collectAllFiles($locale, 'locale', $locale);
-        $this->_collectAllFiles($js, 'js', $url . '/js/');
-        $this->_collectAllFiles($skin, 'skin', $url . '/skin/');
+        $this->_collectAllFiles($js, 'js', $js);
+        $this->_collectAllFiles($skin, 'skin', $skin);
+
+        $this->_collectAllFiles($js, 'js', $js, $url . '/js');
+        $this->_collectAllFiles($skin, 'skin', $skin, $url . '/skin');
     }
 
     /**
@@ -102,7 +113,7 @@ class dahl_dev_config
      * @access protected
      * @return void
      */
-    protected function _collectAllFiles($dir, $key, $target)
+    protected function _collectAllFiles($dir, $key, $target, $url = null)
     {
         if (!is_dir($dir)) {
             return;
@@ -112,7 +123,11 @@ class dahl_dev_config
         foreach ($iterator as $file) {
             if ($file->isFile()) {
                 $path = substr($file->getPathname(), strlen($dir));
-                $this->_staticFiles[$key][$path] = $target . $path;
+                if ($url) {
+                    $this->_staticFilesUrl[$key][$path] = $url . '/' . $path;
+                } else {
+                    $this->_staticFilesPath[$key][$path] = $dir . $path;
+                }
             }
         }
     }
@@ -205,8 +220,8 @@ class dahl_dev_config
      */
     public function renderJsUrl($file)
     {
-        if (isset($this->_staticFiles['js'][$file])) {
-            return $this->_staticFiles['js'][$file];
+        if (isset($this->_staticFilesUrl['js'][$file])) {
+            return $this->_staticFilesUrl['js'][$file];
         }
 
         return null;
@@ -227,8 +242,30 @@ class dahl_dev_config
                 . (isset($params['_theme'])   ? $params['_theme'] . DS   : '')
                 . $file;
 
-        if (isset($this->_staticFiles['skin'][$path])) {
-            return $this->_staticFiles['skin'][$path];
+        if (isset($this->_staticFilesUrl['skin'][$path])) {
+            return $this->_staticFilesUrl['skin'][$path];
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns a path to an external file.
+     * 
+     * @param mixed $file
+     * @param mixed $params
+     * @access public
+     * @return void
+     */
+    public function renderFile($file, $params)
+    {
+        $path   = (isset($params['_area'])    ? $params['_area'] . DS    : '')
+                . (isset($params['_package']) ? $params['_package'] . DS : '')
+                . (isset($params['_theme'])   ? $params['_theme'] . DS   : '')
+                . $file;
+
+        if (isset($this->_staticFilesPath[$params['_type']][$path])) {
+            return $this->_staticFilesPath[$params['_type']][$path];
         }
 
         return null;
@@ -257,8 +294,9 @@ class dahl_dev_config
                         . (isset($params['_package']) ? $params['_package'] . DS : '')
                         . (isset($params['_theme'])   ? $params['_theme'] . DS   : '')
                         . $file;
-                if (isset($this->_staticFiles['skin'][$path])) {
+                if (isset($this->_staticFilesUrl['skin'][$path])) {
                     $dir = 1;
+                } else {
                 }
                 break;
 
@@ -266,10 +304,11 @@ class dahl_dev_config
                 break;
 
             case 'template':
-                if (isset($this->_staticFiles['design'][$path])) {
+                if (isset($this->_staticFilesPath['design'][$path])) {
                     $magePath       = explode(DS, Mage::getBaseDir('design'));
-                    $templatePath   = explode(DS, $this->_staticFiles['design'][$path]);
+                    $templatePath   = explode(DS, $this->_staticFilesPath['design'][$path]);
                     $count          = count($magePath);
+                    $dir = $this->_staticFilesPath['design'][$path];
 
                     for ($i = 0; $i < $count; $i++) {
                         if ($magePath[$i]) {
@@ -285,12 +324,11 @@ class dahl_dev_config
                 }
                 break;
             default:
-                if (isset($this->_staticFiles['design'][$path])) {
-                    $dir = $this->_staticFiles['design'][$path];
+                if (isset($this->_staticFilesPath['design'][$path])) {
+                    $dir = $this->_staticFilesPath['design'][$path];
                 }
                 break;
         }
-
         return $dir;
     }
 
