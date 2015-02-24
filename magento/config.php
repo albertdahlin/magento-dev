@@ -97,8 +97,9 @@ class dahl_dev_config
         $this->_collectAllFiles($design, 'design', $design);
         $this->_collectAllFiles($locale, 'locale', $locale);
         $this->_collectAllFiles($js, 'js', $js);
-        $this->_collectAllFiles($js, 'js', $js, $url . '/js');
         $this->_collectAllFiles($skin, 'skin', $skin);
+
+        $this->_collectAllFiles($js, 'js', $js, $url . '/js');
         $this->_collectAllFiles($skin, 'skin', $skin, $url . '/skin');
     }
 
@@ -121,11 +122,10 @@ class dahl_dev_config
         $iterator       = new RecursiveIteratorIterator($dirIterator);
         foreach ($iterator as $file) {
             if ($file->isFile()) {
+                $path = substr($file->getPathname(), strlen($dir));
                 if ($url) {
-                    $path = substr($file->getPathname(), strlen($dir));
                     $this->_staticFilesUrl[$key][$path] = $url . '/' . $path;
                 } else {
-                    $path = substr($file->getPathname(), strlen($dir));
                     $this->_staticFilesPath[$key][$path] = $dir . $path;
                 }
             }
