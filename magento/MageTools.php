@@ -21,8 +21,9 @@ class MageTools
     {
         include_once buildPath(DAHL_DEVROOT, 'lib', 'PhpTerm', 'Autoload.php');
         self::_init();
-        $input   = new \Dahl\PhpTerm\Input\Keyboard;
-        $output  = new \Dahl\PhpTerm\Output\Terminal;
+        $window  = new \Dahl\PhpTerm\Window;
+        $input   = $window->getInput();
+        $output  = $window->getOutput();
         $key     = $input->getKeys();
         $classes = self::_getClasses();
 
@@ -30,11 +31,23 @@ class MageTools
             ->cls()
             ->setPos();
 
-        echo "What do you want to do?\n\n";
+        $window->addElement('1')
+            ->setStyle('middle: 50%; text-align: center;')
+            ->setText("\nMAGE TOOLS\n \nSelect an option from the list below:\n");
+        $list = '';
         foreach ($classes as $idx => $class) {
-            echo "  [{$idx}]    {$class::getTitle()}\n";
+            $list .=  "[{$idx}]    {$class::getTitle()}\n";
         }
-        echo "\nSelect tool or \"ESC\" to exit: ";
+
+        $window->addElement('2')
+            ->setStyle('middle: 50%')
+            ->setText($list);
+
+        $window->addElement('3')
+            ->setStyle('position: fixed; bottom: 0; left: 0')
+            ->setText("Select tool or \"ESC\" to exit: ");
+
+        $window->render();
 
         $choice = $input->readChar(
             implode('', array_keys($classes)), 
