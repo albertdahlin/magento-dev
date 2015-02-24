@@ -87,6 +87,37 @@ class Mage_Core_Model_Design_Package
     }
 
     /**
+     * Use this one to get existing file name with fallback to default
+     *
+     * $params['_type'] is required
+     *
+     * @param string $file
+     * @param array $params
+     * @return string
+     */
+    public function getFilename($file, array $params)
+    {
+        Varien_Profiler::start(__METHOD__);
+        $this->updateParamDefaults($params);
+        $result = $this->_fallback(
+            $file,
+            $params,
+            $this->_fallback->getFallbackScheme(
+                $params['_area'],
+                $params['_package'],
+                $params['_theme']
+            )
+        );
+
+        if ($result === 1) {
+            return dahl_dev::getConfig()->renderFile($file, $params);
+        }
+
+        Varien_Profiler::stop(__METHOD__);
+        return $result;
+    }
+
+    /**
      * Check whether requested file exists in specified theme params
      *
      * Possible params:
