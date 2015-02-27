@@ -1,6 +1,9 @@
 <?php
 define('DAHL_DEVROOT', dirname(__file__));
-if (strpos($_SERVER['SCRIPT_NAME'], 'composer') !== false) {
+if (
+    strpos($_SERVER['SCRIPT_NAME'], 'composer') !== false
+    || strpos($_SERVER['SCRIPT_NAME'], 'magerun') !== false
+) {
     return;
 }
 function buildPath() {
