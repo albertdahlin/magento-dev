@@ -3,6 +3,7 @@ define('DAHL_DEVROOT', dirname(__file__));
 if (
     strpos($_SERVER['SCRIPT_NAME'], 'composer') !== false
     || strpos($_SERVER['SCRIPT_NAME'], 'magerun') !== false
+    || strpos($_SERVER['SCRIPT_NAME'], 'cron.php') !== false
 ) {
     return;
 }
