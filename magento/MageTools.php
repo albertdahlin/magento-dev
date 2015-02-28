@@ -71,7 +71,7 @@ class MageTools
     static protected function _init()
     {
         if (defined('DAHL_MAGEROOT')) {
-            \Mage::app()->init('admin');
+            \Mage::app()->init('admin', 'store');
         }
         include_once buildPath(dirname(__file__), 'MageTools', 'Interface.php');
     }
