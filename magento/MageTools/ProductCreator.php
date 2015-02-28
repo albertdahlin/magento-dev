@@ -74,9 +74,13 @@ TEXT;
         $autoIncrement = $tableStatus['Auto_increment'];
         $websiteIds  = array(0, 1);
         $progressbar = $window->addElement('bar', 'ProgressBar')
-            ->setStyle('posistion: fixed; top: 2; middle: 50%;')
+            ->setStyle('position: fixed; top: 1; middle: 50%;')
             ->setWidth('90%')
             ->setMax($amount);
+
+        $info = $window->addElement('info')
+            ->setStyle('position: fixed; top: 3;')
+            ->setText('');
 
         $output->cls()->setPos();
 
@@ -108,6 +112,7 @@ TEXT;
             'use_config_notify_stock_qty'   => 1,
             'is_qty_decimal'                => 0,
         );
+        $text = array();
         for ($i = 0; $i < $amount; $i++) {
             if ($replace) {
                 $productName = sprintf($name, $autoIncrement + $i);
@@ -123,7 +128,13 @@ TEXT;
             } catch (Exception $e) {
                 echo \dahbug::dump($e->getMessage() . "\n");
             }
+            $text[] = "Created product \"{$productName}\"";
+            if (count($text) > 6) {
+                array_shift($text);
+            }
+
             $progressbar->setPosition($i + 1);
+            $info->setText(implode("\n", $text));
             $window->render();
         }
         echo "\n\nDone createing {$amount} products.\n";
@@ -140,6 +151,7 @@ TEXT;
             echo "[{$child->getId()}]  {$child->getName()}";
             self::_printCategories($child, $recursion + 1);
         }
+        echo "\n";
     }
 
 
