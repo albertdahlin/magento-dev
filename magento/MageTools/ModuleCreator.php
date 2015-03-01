@@ -107,7 +107,9 @@ class ModuleCreator
         $options = new ModuleCreator\Options;
 
         $output->cls()->setPos();
-        self::_getInputData();
+        if (!self::_getInputData()) {
+            return;
+        }
 
         foreach (self::$_config['options'] as $k => $isSelected) {
             if ($isSelected) {
@@ -130,7 +132,7 @@ class ModuleCreator
      * 
      * @static
      * @access protected
-     * @return void
+     * @return boolean
      */
     static protected function _getInputData()
     {
@@ -139,52 +141,70 @@ class ModuleCreator
         $output = $window->getOutput();
         $key    = $input->getKeys();
         $config = array();
+        /**
+         * Module Namespace.
+         */
         echo "Enter information. Press ESC to abort.\n\n";
         echo "Enter module namespace. First letter will be capitalized. e.g \"mage\" will be converted to \"Mage\".\n";
         if (($config['namespace'] = $input->readLine('Namespace: ', true, 'a-zA-Z')) === false) {
             echo "Exit.\n";
-            return;
+            return false;
         }
         $config['namespace'] = ucfirst($config['namespace']);
 
-        echo "\nEnter module name, i.e the part after {$config['namespace']}_\n";
+        /**
+         * Module Name.
+         */
+        echo "\n\nEnter module name. i.e the part after {$config['namespace']}_\nThe first letter will be capitalized.\n";
         if (($config['moduleName'] = $input->readLine($config['namespace'] . '_', true, 'a-zA-Z')) === false) {
             echo "Exit.\n";
-            return;
+            return false;
         }
         $config['moduleName'] = ucfirst($config['moduleName']);
 
-        echo "\nEnter module identifier, ie the part used in Mage::getModel('<identifier/class')\n";
-        if (($config['identifier'] = $input->readLine('Factory Identifier: ', true, 'a-z')) === false) {
+        /**
+         * Module factory identifier.
+         */
+        echo "\n\nEnter module factory identifier, i.e the first part used in Mage::getModel('<identifier>/class_name')\n";
+        if (($config['identifier'] = $input->readLine('Factory Identifier: ', true, 'a-z_')) === false) {
             echo "Exit.\n";
-            return;
+            return false;
+        }
+        if (!$config['identifier']) {
+            $config['identifier'] = strtolower($config['moduleName']);
         }
 
+        /**
+         * Module Code Pool.
+         */
         $codePools = array(
             'o' => 'core',
             'c' => 'community',
             'l' => 'local'
         );
-        echo "\nSelect code pool\n";
+        echo "\n\nSelect code pool:\n";
         foreach ($codePools as $c => $pool) {
             echo "    [{$c}] {$pool}\n";
         }
         $char = $input->readChar(implode('', array_keys($codePools)));
         $config['codepool'] = $codePools[$char];
 
+        /**
+         * Module Options.
+         */
         $output->cls()->setPos();
 
         $options = array(
+            'b' => "Block                ({$config['namespace']}_{$config['moduleName']}_Block)",
+            'h' => "Helper               ({$config['namespace']}_{$config['moduleName']}_Helper_Data)",
+            'm' => "Model                ({$config['namespace']}_{$config['moduleName']}_Model)",
+            'r' => 'Resource Model',
+            's' => "sql Setup            (sql/{$config['identifier']}_setup/install-1.0.0.php)",
             'c' => 'Frontend Controller',
-            'l' => "Frontend Layout xml ({$config['identifier']}.xml)",
+            'l' => "Frontend Layout xml  ({$config['identifier']}.xml)",
             'C' => "Adminhtml Controller",
             'L' => "Adminhtml Layout xml ({$config['identifier']}.xml)",
-            't' => "Translate CSV ({$config['namespace']}_{$config['moduleName']}.csv)",
-            'b' => 'Block',
-            'h' => 'Helper',
-            'm' => 'Model',
-            'r' => 'Resource Model',
-            's' => 'sql Setup',
+            't' => "Translate CSV        ({$config['namespace']}_{$config['moduleName']}.csv)",
         );
         $values = array(
             'h' => true,
@@ -193,7 +213,8 @@ class ModuleCreator
         $el = $window->addElement('options')
             ->setStyle('position: fixed; top: 2; left: 3;')
             ->setText('');
-        echo "Use the letters to select, 'a' will select all. Press ENTER when you are done.";
+        echo "Use the letters to toggle settings, 'a' will toggle all. Press ENTER when you are done.";
+        $allToggle = true;
         while (true) {
             $text = '';
             foreach ($options as $c => $label) {
@@ -201,19 +222,24 @@ class ModuleCreator
                 if (isset($values[$c])) {
                     $use = $values[$c];
                 }
-                $yesNo = $use ? 'yes' : ' no';
+                $yesNo = $use ? '(yes)' : ' (no)';
                 $text .= "[{$c}]   {$yesNo}  {$label}\n";
             }
             $el->setText($text);
             $window->render();
-            $char = $input->readChar('a' . implode('', array_keys($options)), array($key::ENTER));
+            $char = $input->readChar('a' . implode('', array_keys($options)), array($key::ENTER, $key::ESC));
+            if ($char == $key::ESC) {
+                echo "exit\n";
+                return false;
+            }
             if ($char == $key::ENTER) {
                 break;
             }
             if ($char == 'a') {
                 foreach ($options as $c => $option) {
-                    $values[$c] = true;
+                    $values[$c] = $allToggle;
                 }
+                $allToggle = !$allToggle;
                 continue;
             }
             if (isset($values[$char])) {
@@ -222,11 +248,13 @@ class ModuleCreator
                 $values[$char] = true;
             }
         }
+        echo "\n";
         $config['options'] = $values;
         $config['xml'] = new ModuleCreator\XmlConfig('<config></config>');
         $config['xml']->setNode("modules/{$config['namespace']}_{$config['moduleName']}/version", '1.0.0');
 
         self::$_config = $config;
+        return true;
     }
 
     /**
