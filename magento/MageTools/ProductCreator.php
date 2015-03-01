@@ -1,32 +1,79 @@
 <?php
 namespace MageTools;
 
+/**
+ * Product creator.
+ * 
+ * @copyright Copyright (C) 2015 Albert Dahlin
+ * @author Albert Dahlin <info@albertdahlin.com>
+ * @license GNU GPL v3.0 <http://www.gnu.org/licenses/gpl-3.0.html>
+ */
 class ProductCreator
  implements MageToolsModule
 {
+    /**
+     * Product description.
+     * 
+     * @var string
+     * @access protected
+     */
     static protected $_description = <<<TEXT
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempor turpis id ex tincidunt, nec imperdiet augue pharetra. Aliquam cursus eros sed convallis viverra. Nunc blandit nisl turpis, ultricies sodales sapien lobortis eget. Pellentesque at volutpat nulla. Nam lacinia risus ullamcorper convallis sagittis. Etiam congue, massa vel volutpat semper, turpis libero facilisis nulla, mollis efficitur felis urna quis odio. Nulla justo massa, molestie sed tellus dapibus, commodo tristique orci. Vestibulum sagittis lacus a imperdiet ullamcorper.
 
 Praesent elit enim, eleifend eget justo sed, lacinia convallis urna. Aliquam erat volutpat. Pellentesque scelerisque ipsum dolor, in mattis felis mollis in. Morbi pharetra tristique ex, sed pharetra orci suscipit vel. Proin venenatis massa sit amet nulla condimentum, at consequat sapien finibus. Proin odio mi, molestie ut volutpat in, fermentum ut turpis. In in massa ut mauris egestas vulputate nec sit amet neque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed eget malesuada felis. Ut vitae risus volutpat, posuere ex ut, hendrerit nisl. Cras aliquam fringilla metus, id aliquam augue tincidunt quis.
 TEXT;
 
+    /**
+     * Product short description.
+     * 
+     * @var string
+     * @access protected
+     */
     static protected $_shortDescription = 'Praesent elit enim, eleifend eget justo sed, lacinia convallis urna.';
 
+    /**
+     * Module title.
+     * 
+     * @static
+     * @access public
+     * @return string
+     */
     static public function getTitle()
     {
         return 'Create Products';
     }
 
+    /**
+     * Key identifier.
+     * 
+     * @static
+     * @access public
+     * @return string
+     */
     static public function getKey()
     {
         return 'p';
     }
 
+    /**
+     * Is module Mage dependant.
+     * 
+     * @static
+     * @access public
+     * @return boolean
+     */
     static public function isMageDependant()
     {
         return true;
     }
 
+    /**
+     * Run module.
+     * 
+     * @static
+     * @access public
+     * @return void
+     */
     static public function run()
     {
         $window = new \Dahl\PhpTerm\Window;
@@ -140,6 +187,15 @@ TEXT;
         echo "\n\nDone createing {$amount} products.\n";
     }
 
+    /**
+     * Print category tree with ids.
+     * 
+     * @param Mage_Catalog_Model_Category $category
+     * @param int $recursion
+     * @static
+     * @access protected
+     * @return void
+     */
     static protected function _printCategories($category, $recursion = 0)
     {
         $categories = \Mage::getResourceModel('catalog/category_collection')
@@ -153,7 +209,4 @@ TEXT;
         }
         echo "\n";
     }
-
-
 }
-
