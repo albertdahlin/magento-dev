@@ -10,6 +10,7 @@
  */
 class MageTools
 {
+    static protected $_window;
     /**
      * Run mage tools.
      * 
@@ -17,11 +18,18 @@ class MageTools
      * @access public
      * @return void
      */
+
+    static public function getWindow()
+    {
+        return self::$_window;
+    }
+
     static public function run()
     {
         include_once buildPath(DAHL_DEVROOT, 'lib', 'PhpTerm', 'Autoload.php');
         self::_init();
         $window  = new \Dahl\PhpTerm\Window;
+        self::$_window = $window;
         $input   = $window->getInput();
         $output  = $window->getOutput();
         $key     = $input->getKeys();
@@ -58,6 +66,7 @@ class MageTools
             return;
         }
         echo $choice . "\n";
+        $classes[$choice]::setWindow($window);
         $classes[$choice]::run();
     }
 
@@ -85,7 +94,7 @@ class MageTools
      */
     static protected function _getClasses()
     {
-        $files   = glob(buildPath(dirname(__file__), 'MageTools', '*'));
+        $files   = glob(buildPath(dirname(__file__), 'MageTools', '*.php'));
         $classes = array();
         $isMage  = defined('DAHL_MAGEROOT');
 
