@@ -52,12 +52,11 @@ class dahl_dev_config
      */
     public function loadExternal($path, $skinUrl = null)
     {
-        if (is_dir($path)) {
+        $realpath = realpath($this->getModulePath() . DS . $path);
+        if (!is_dir($realpath)) {
             $realpath = $path;
             $path = explode('/', $path);
             $path = end($path);
-        } else {
-            $realpath = realpath($this->getModulePath() . DS . $path);
         }
         if (is_dir($realpath)) {
             if (!$skinUrl) {
@@ -191,7 +190,7 @@ class dahl_dev_config
             }
         }
 
-        return null;
+        return array();
     }
 
     /**
