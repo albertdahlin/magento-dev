@@ -35,6 +35,14 @@ class dahl_dev_config
     protected $_staticFiles = array();
 
     /**
+     * External urls.
+     * 
+     * @var array
+     * @access protected
+     */
+    protected $_staticUrls = array();
+
+    /**
      * Load external resources.
      * 
      * @param string $path  The path to the root where files are located.
@@ -86,8 +94,8 @@ class dahl_dev_config
         $js     = $rootPath . DS . 'js' . DS;
         $skin   = $rootPath . DS . 'skin' . DS;
 
-        $this->_collectAllFiles($design, 'design', $design);
-        $this->_collectAllFiles($locale, 'locale', $locale);
+        $this->_collectAllFiles($design, 'design');
+        $this->_collectAllFiles($locale, 'locale');
         $this->_collectAllFiles($js, 'js', $url . '/js/');
         $this->_collectAllFiles($skin, 'skin', $url . '/skin/');
     }
@@ -98,11 +106,11 @@ class dahl_dev_config
      * 
      * @param string $dir    The dir from where to start collecting.
      * @param string $key    A identifier key.
-     * @param string $target The target path or url.
+     * @param string $url    The url this file should be reachable from.
      * @access protected
      * @return void
      */
-    protected function _collectAllFiles($dir, $key, $target)
+    protected function _collectAllFiles($dir, $key, $url = null)
     {
         if (!is_dir($dir)) {
             return;
@@ -112,7 +120,10 @@ class dahl_dev_config
         foreach ($iterator as $file) {
             if ($file->isFile()) {
                 $path = substr($file->getPathname(), strlen($dir));
-                $this->_staticFiles[$key][$path] = $target . $path;
+                $this->_staticFiles[$key][$path] = $dir . $path;
+                if ($url) {
+                    $this->_staticUrls[$key][$path] = $url . $path;
+                }
             }
         }
     }
@@ -205,8 +216,8 @@ class dahl_dev_config
      */
     public function renderJsUrl($file)
     {
-        if (isset($this->_staticFiles['js'][$file])) {
-            return $this->_staticFiles['js'][$file];
+        if (isset($this->_staticUrls['js'][$file])) {
+            return $this->_staticUrls['js'][$file];
         }
 
         return null;
@@ -227,8 +238,8 @@ class dahl_dev_config
                 . (isset($params['_theme'])   ? $params['_theme'] . DS   : '')
                 . $file;
 
-        if (isset($this->_staticFiles['skin'][$path])) {
-            return $this->_staticFiles['skin'][$path];
+        if (isset($this->_staticUrls['skin'][$path])) {
+            return $this->_staticUrls['skin'][$path];
         }
 
         return null;
@@ -257,8 +268,9 @@ class dahl_dev_config
                         . (isset($params['_package']) ? $params['_package'] . DS : '')
                         . (isset($params['_theme'])   ? $params['_theme'] . DS   : '')
                         . $file;
+
                 if (isset($this->_staticFiles['skin'][$path])) {
-                    $dir = 1;
+                    $dir = $this->_staticFiles['skin'][$path];
                 }
                 break;
 
@@ -284,6 +296,7 @@ class dahl_dev_config
                     $dir .= implode(DS, array_splice($templatePath, $i));
                 }
                 break;
+
             default:
                 if (isset($this->_staticFiles['design'][$path])) {
                     $dir = $this->_staticFiles['design'][$path];

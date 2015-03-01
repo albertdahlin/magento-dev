@@ -77,9 +77,9 @@ class Mage_Core_Model_Design_Package
                 $params,
                 $fallback
             );
-            if ($result === 1) {
-                return dahl_dev::getConfig()->renderSkinUrl($file, $params);
-            }
+        }
+        if ($result = dahl_dev::getConfig()->renderSkinUrl($file, $params)) {
+            return $result;
         }
         $result = $this->getSkinBaseUrl($params) . (empty($file) ? '' : $file);
         Varien_Profiler::stop(__METHOD__);
