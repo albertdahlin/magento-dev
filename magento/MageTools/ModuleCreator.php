@@ -204,7 +204,6 @@ class ModuleCreator
             'l' => "Frontend Layout xml  ({$config['identifier']}.xml)",
             'C' => "Adminhtml Controller",
             'L' => "Adminhtml Layout xml ({$config['identifier']}.xml)",
-            't' => "Translate CSV        ({$config['namespace']}_{$config['moduleName']}.csv)",
         );
         $values = array(
             'h' => true,
