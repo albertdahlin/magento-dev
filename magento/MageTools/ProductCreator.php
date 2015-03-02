@@ -12,6 +12,13 @@ class ProductCreator
  implements MageToolsModule
 {
     /**
+     * Config data
+     * 
+     * @var \Dahl\PhpTerm\Window
+     * @access protected
+     */
+    static protected $_window;
+    /**
      * Product description.
      * 
      * @var string
@@ -30,6 +37,19 @@ TEXT;
      * @access protected
      */
     static protected $_shortDescription = 'Praesent elit enim, eleifend eget justo sed, lacinia convallis urna.';
+
+    /**
+     * Set window object
+     * 
+     * @param Dahl\PhpTerm\Window $window
+     * @static
+     * @access public
+     * @return void
+     */
+    static public function setWindow($window)
+    {
+        self::$_window = $window;
+    }
 
     /**
      * Module title.
@@ -76,7 +96,7 @@ TEXT;
      */
     static public function run()
     {
-        $window = new \Dahl\PhpTerm\Window;
+        $window = self::$_window;
         $input = $window->getInput();
         $output = $window->getOutput();
         $key    = $input->getKeys();
