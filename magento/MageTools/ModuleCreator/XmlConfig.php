@@ -99,8 +99,11 @@ class XmlConfig extends SimpleXMLElement
      * @access public
      * @return XmlConfig
      */
-    public function setNode($path, $value)
+    public function setNode($path, $value, $overwrite = false)
     {
+        if (!$overwrite && $this->getNode($path)) {
+            return $this;
+        }
         $arr1 = explode('/', $path);
         $arr = array();
         foreach ($arr1 as $v) {
