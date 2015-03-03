@@ -67,7 +67,11 @@ class MageTools
         }
         echo $choice . "\n";
         $classes[$choice]::setWindow($window);
-        $classes[$choice]::run();
+        try {
+            $classes[$choice]::run();
+        } catch (AbortException $e) {
+            echo $e->getMessage() . "\n";
+        }
     }
 
     /**
@@ -83,6 +87,7 @@ class MageTools
             \Mage::app()->init('admin', 'store');
         }
         include_once buildPath(dirname(__file__), 'MageTools', 'Interface.php');
+        include_once buildPath(dirname(__file__), 'AbortException.php');
     }
 
     /**
