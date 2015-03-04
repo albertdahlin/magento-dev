@@ -339,13 +339,14 @@ class ModuleCreator
      */
     static protected function _selectModule($file)
     {
-        $window = self::$_window;
-        $input  = $window->getInput();
-        $key    = $input->getKeys();
-        $config = array();
-        $xmlFile = file_get_contents($file);
+        $window     = self::$_window;
+        $input      = $window->getInput();
+        $key        = $input->getKeys();
+        $config     = array();
+        $xmlFile    = file_get_contents($file);
         $declareXml = new ModuleCreator\XmlConfig($xmlFile);
         $modules    = $declareXml->xpath('/config/modules/*');
+
         if (count($modules) > 1) {
             $fname = pathinfo($file, PATHINFO_BASENAME);
             echo "Multiple modules found in file {$fname}, select one:\n\n";
