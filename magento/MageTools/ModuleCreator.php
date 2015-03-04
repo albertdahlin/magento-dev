@@ -369,11 +369,13 @@ class ModuleCreator
         } else {
             $module = reset($modules);
         }
+
         list($namespace, $moduleName) = explode('_', $module->getName());
         $codepool             = (string)$module->codePool;
         $config['namespace']  = $namespace;
         $config['moduleName'] = $moduleName;
         $config['codepool']   = $codepool;
+        $config['declareXml'] = $declareXml;
         $configFile = MODULE_ROOT . "/app/code/{$codepool}/{$namespace}/{$moduleName}/etc/config.xml";
         if (is_file($configFile)) {
             $configXml = file_get_contents($configFile);
@@ -455,23 +457,25 @@ class ModuleCreator
             $config['xml']->getXml()
         );
 
-        $declareXml = new ModuleCreator\XmlConfig('<config></config>');
-        $declareXml->setNode(
-            "modules/{$config['namespace']}_{$config['moduleName']}/active",
-            'true'
-        );
+        if (!isset($config['declareXml']) || !$config['declareXml']) {
+            $declareXml = new ModuleCreator\XmlConfig('<config></config>');
+            $declareXml->setNode(
+                "modules/{$config['namespace']}_{$config['moduleName']}/active",
+                'true'
+            );
 
-        $declareXml->setNode(
-            "modules/{$config['namespace']}_{$config['moduleName']}/codePool",
-            $config['codepool']
-        );
+            $declareXml->setNode(
+                "modules/{$config['namespace']}_{$config['moduleName']}/codePool",
+                $config['codepool']
+            );
 
-        $declareDir = "app/etc/modules";
-        @mkdir(MODULE_ROOT . '/' . $declareDir, 0777, true);
-        file_put_contents(
-            MODULE_ROOT . "/{$declareDir}/{$config['namespace']}_{$config['moduleName']}.xml",
-            $declareXml->getXml()
-        );
+            $declareDir = "app/etc/modules";
+            @mkdir(MODULE_ROOT . '/' . $declareDir, 0777, true);
+            file_put_contents(
+                MODULE_ROOT . "/{$declareDir}/{$config['namespace']}_{$config['moduleName']}.xml",
+                $declareXml->getXml()
+            );
+        }
 
         echo "\nCreated module \"{$config['namespace']}_{$config['moduleName']}\"\n";
     }
