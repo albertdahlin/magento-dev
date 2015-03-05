@@ -127,7 +127,7 @@ class dahl_dev
                 $codePool  = $config->getModuleData($moduleName, 'codePool');
                 $classFile = $codeDir . DS . $codePool . DS . implode(DS, $class);
                 $classFile .= '.php';
-                if (is_file($classfile)) {
+                if (is_file($classFile)) {
                     return include($classFile);
                 }
             }
