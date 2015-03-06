@@ -1,5 +1,7 @@
 <?php
-namespace MageTools;
+namespace Dahl\MageTools\Plugins;
+use Dahl\MageTools\AbortException;
+use Dahl\MageTools\PluginAbstract;
 
 /**
  * Product creator.
@@ -9,7 +11,7 @@ namespace MageTools;
  * @license GNU GPL v3.0 <http://www.gnu.org/licenses/gpl-3.0.html>
  */
 class ProductCreator
- implements MageToolsModule
+ extends PluginAbstract
 {
     /**
      * Config data

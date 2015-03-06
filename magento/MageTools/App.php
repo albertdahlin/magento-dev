@@ -1,5 +1,6 @@
 <?php
-
+namespace Dahl\MageTools;
+use Exception;
 /**
  * Mage tools bootstrap class.
  * 
@@ -8,7 +9,7 @@
  * @author Albert Dahlin <info@albertdahlin.com>
  * @license GNU GPL v3.0 <http://www.gnu.org/licenses/gpl-3.0.html>
  */
-class MageTools
+class App
 {
     static protected $_window;
     /**
@@ -24,16 +25,21 @@ class MageTools
         return self::$_window;
     }
 
+    /**
+     * Run Mage tools
+     * 
+     * @static
+     * @access public
+     * @return void
+     */
     static public function run()
     {
-        include_once buildPath(DAHL_DEVROOT, 'lib', 'PhpTerm', 'Autoload.php');
         self::_init();
-        $window  = new \Dahl\PhpTerm\Window;
-        self::$_window = $window;
+        $window  = self::$_window;
         $input   = $window->getInput();
         $output  = $window->getOutput();
         $key     = $input->getKeys();
-        $classes = self::_getClasses();
+        $plugins = self::_getPlugins();
 
         $output
             ->cls()
@@ -43,7 +49,7 @@ class MageTools
             ->setStyle('middle: 50%; text-align: center;')
             ->setText("\nMAGE TOOLS\n \nSelect an option from the list below:\n");
         $list = '';
-        foreach ($classes as $idx => $class) {
+        foreach ($plugins as $idx => $class) {
             $list .=  "[{$idx}]    {$class::getTitle()}\n";
         }
 
@@ -58,7 +64,7 @@ class MageTools
         $window->render();
 
         $choice = $input->readChar(
-            implode('', array_keys($classes)), 
+            implode('', array_keys($plugins)), 
             array($key::ESC)
         );
         if ($choice == $key::ESC) {
@@ -66,10 +72,12 @@ class MageTools
             return;
         }
         echo $choice . "\n";
-        $classes[$choice]::setWindow($window);
+        $plugins[$choice]::setWindow($window);
         try {
-            $classes[$choice]::run();
+            $plugins[$choice]::run();
         } catch (AbortException $e) {
+            echo $e->getMessage() . "\n";
+        } catch (Exception $e) {
             echo $e->getMessage() . "\n";
         }
     }
@@ -83,11 +91,12 @@ class MageTools
      */
     static protected function _init()
     {
+        include_once buildPath(DAHL_DEVROOT, 'lib', 'PhpTerm', 'Autoload.php');
+        \Dahl\Autoload::registerBase('Dahl\\MageTools', dirname(__file__));
         if (defined('DAHL_MAGEROOT')) {
             \Mage::app()->init('admin', 'store');
         }
-        include_once buildPath(dirname(__file__), 'MageTools', 'Interface.php');
-        include_once buildPath(dirname(__file__), 'AbortException.php');
+        self::$_window = new \Dahl\PhpTerm\Window;
     }
 
     /**
@@ -97,25 +106,22 @@ class MageTools
      * @access protected
      * @return array
      */
-    static protected function _getClasses()
+    static protected function _getPlugins()
     {
-        $files   = glob(buildPath(dirname(__file__), 'MageTools', '*.php'));
+        $files   = glob(buildPath(dirname(__file__), 'Plugins', '*.php'));
         $classes = array();
         $isMage  = defined('DAHL_MAGEROOT');
 
         foreach ($files as $file) {
-            $className = '\\MageTools\\' . pathinfo($file, PATHINFO_FILENAME);
-            if ($className == '\\MageTools\\Interface') {
-                continue;
-            }
+            $className = '\\Dahl\\MageTools\\Plugins\\' . pathinfo($file, PATHINFO_FILENAME);
             include_once $file;
 
             if (!class_exists($className)) {
                 throw new Exception("{$className} is not declared in file {$file}");
             }
 
-            if (!is_subclass_of($className, '\MageTools\MageToolsModule')) {
-                throw new Exception("{$className} needs to implement interface MageToolsModule");
+            if (!is_subclass_of($className, '\\Dahl\\MageTools\\PluginInterface')) {
+                throw new Exception("{$className} needs to implement interface Dahl\\MageTools\\PluginInterface");
             }
 
             if ($className::isMageDependant()) {
@@ -131,4 +137,4 @@ class MageTools
     }
 }
 
-MageTools::run();
+App::run();

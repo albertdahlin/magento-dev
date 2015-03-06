@@ -1,6 +1,6 @@
 <?php
 
-namespace MageTools\ModuleCreator;
+namespace Dahl\MageTools\Plugins\ModuleCreator;
 use \SimpleXMLElement;
 
 /**

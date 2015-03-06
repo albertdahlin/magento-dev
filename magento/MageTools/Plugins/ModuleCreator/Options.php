@@ -1,6 +1,8 @@
 <?php
 
-namespace MageTools\ModuleCreator;
+namespace Dahl\MageTools\Plugins\ModuleCreator;
+use Dahl\MageTools\Plugins\ModuleCreator;
+use Dahl\MageTools\App;
 
 class Options
 {
@@ -13,7 +15,7 @@ class Options
      */
     protected function _getModuleDir($subPath)
     {
-        $config = \MageTools\ModuleCreator::getConfig();
+        $config = ModuleCreator::getConfig();
         $dir = implode(
             DIRECTORY_SEPARATOR,
             array(
@@ -249,7 +251,7 @@ class Options
      */
     public function optionLowerC(&$config)
     {
-        $input  = \MageTools::getWindow()->getInput();
+        $input  = App::getWindow()->getInput();
         $identifier = $config['identifier'];
         $frontname = $input->readLine("\nEnter Frontname [{$identifier}]: ", true, 'a-zA-Z\d_-');
         if (!$frontname) {

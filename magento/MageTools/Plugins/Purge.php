@@ -1,9 +1,10 @@
 <?php
-
-namespace MageTools;
+namespace Dahl\MageTools\Plugins;
+use Dahl\MageTools\AbortException;
+use Dahl\MageTools\PluginAbstract;
 
 class Purge
- implements MageToolsModule
+ extends PluginAbstract
 {
     static public function getTitle()
     {

@@ -1,6 +1,7 @@
 <?php
-namespace MageTools;
-use \AbortException;
+namespace Dahl\MageTools\Plugins;
+use Dahl\MageTools\AbortException;
+use Dahl\MageTools\PluginAbstract;
 
 /**
  * ModuleCreator class.
@@ -10,16 +11,8 @@ use \AbortException;
  * @license GNU GPL v3.0 <http://www.gnu.org/licenses/gpl-3.0.html>
  */
 class ModuleCreator
- implements MageToolsModule
+ extends PluginAbstract
 {
-    /**
-     * Config data
-     * 
-     * @var \Dahl\PhpTerm\Window
-     * @access protected
-     */
-    static protected $_window;
-
     /**
      * Config data
      * 
@@ -65,19 +58,6 @@ class ModuleCreator
     }
 
     /**
-     * Set window object
-     * 
-     * @param Dahl\PhpTerm\Window $window
-     * @static
-     * @access public
-     * @return void
-     */
-    static public function setWindow($window)
-    {
-        self::$_window = $window;
-    }
-
-    /**
      * Returns config array.
      * 
      * @static
@@ -103,8 +83,6 @@ class ModuleCreator
         $input = $window->getInput();
         $output = $window->getOutput();
         $key    = $input->getKeys();
-        include 'ModuleCreator/Options.php';
-        include 'ModuleCreator/XmlConfig.php';
         $options = new ModuleCreator\Options;
 
         $output->cls()->setPos();
