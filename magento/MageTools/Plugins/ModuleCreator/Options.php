@@ -4,6 +4,13 @@ namespace Dahl\MageTools\Plugins\ModuleCreator;
 use Dahl\MageTools\Plugins\ModuleCreator;
 use Dahl\MageTools\App;
 
+/**
+ * Options class. Takes care of applying options to the xml config file.
+ * 
+ * @copyright Copyright (C) 2015 Albert Dahlin
+ * @author Albert Dahlin <info@albertdahlin.com>
+ * @license GNU GPL v3.0 <http://www.gnu.org/licenses/gpl-3.0.html>
+ */
 class Options
 {
     /**
