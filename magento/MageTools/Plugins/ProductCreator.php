@@ -175,7 +175,7 @@ TEXT;
                     ->save();
 
             } catch (Exception $e) {
-                echo \dahbug::dump($e->getMessage() . "\n");
+                echo $e->getMessage();
             }
             $text[] = "Created product \"{$productName}\"";
             if (count($text) > 6) {
