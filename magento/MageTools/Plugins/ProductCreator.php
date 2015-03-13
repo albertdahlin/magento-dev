@@ -121,7 +121,7 @@ TEXT;
         $adapter = \Mage::getSingleton('core/resource')->getConnection('core_read');
         $tableStatus = $adapter->showTableStatus('catalog_product_entity');
         $autoIncrement = $tableStatus['Auto_increment'];
-        $websiteIds  = array(0, 1);
+        $websiteIds  = array_keys(\Mage::app()->getWebsites(true));
         $progressbar = $window->addElement('bar', 'ProgressBar')
             ->setStyle('position: fixed; top: 1; middle: 50%;')
             ->setWidth('90%')
