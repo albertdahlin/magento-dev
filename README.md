@@ -6,6 +6,12 @@
 * Includes a cli script with some useful tools.
 
 ### Installation
+Just clone this repo and then download the dependencies by running:
+```
+git submodule init
+git submodule update
+```
+
 Add the `dev.php` file to you `auto_prepend_file` setting in php.ini. You can also include `dev.php` in your project's `index.php`.
 
 To use the `mage` cli toolbox, create a symlink to `<dev root>/magento/mage.sh` in any dir that is included in yor $PATH environmental var. For example:
