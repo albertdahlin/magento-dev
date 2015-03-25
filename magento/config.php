@@ -43,6 +43,90 @@ class dahl_dev_config
     protected $_staticUrls = array();
 
     /**
+     * Registered external modules to be loaded
+     * 
+     * @var array
+     * @access protected
+     */
+    protected $_registeredModules = array();
+
+    /**
+     * Register external module to be loaded
+     * 
+     * @param string $path  The path to the root where files are located.
+     * @param stirng $url   An url from where static files can be loaded.
+     * @access public
+     * @return void
+     */
+    public function enableExternal($path, $skinUrl = null)
+    {
+        if (is_array($path)) {
+            foreach ($path as $p) {
+                return $this->enableExternal($p, $skinUrl);
+            }
+        }
+
+        $this->_registeredModules[$path] = $skinUrl;
+    }
+
+    /**
+     * Unregister external module to be loaded
+     * 
+     * @param string $path  The path to the root where files are located.
+     * @access public
+     * @return void
+     */
+    public function disableExternal($path)
+    {
+        if (is_array($path)) {
+            foreach ($path as $p) {
+                return $this->disableExternal($p, $skinUrl);
+            }
+        }
+        unset($this->_registeredModules[$path]);
+    }
+
+    /**
+     * Load all registered external modules
+     * 
+     * @access public
+     * @return void
+     */
+    public function loadExternalModules()
+    {
+        $this->_processModuleCookies();
+
+        foreach ($this->_registeredModules as $path => $skinUrl) {
+            $this->loadExternal($path, $skinUrl);
+        }
+    }
+
+    /**
+     * Process module cookie to enable/disable external modules
+     * 
+     * @access protected
+     * @return void
+     */
+    protected function _processModuleCookies()
+    {
+        if (isset($_COOKIE['enableModule'])) {
+            $enable = $_COOKIE['enableModule'];
+            $modules = explode(",", $enable);
+            foreach ($modules as $module) {
+                $this->enableExternal($module);
+            }
+        }
+
+        if (isset($_COOKIE['disableModule'])) {
+            $disable = $_COOKIE['disableModule'];
+            $modules = explode(",", $disable);
+            foreach ($modules as $module) {
+                $this->disableExternal($module);
+            }
+        }
+    }
+
+    /**
      * Load external resources.
      * 
      * @param string $path  The path to the root where files are located.
@@ -57,6 +141,7 @@ class dahl_dev_config
                 return $this->loadExternal($p, $skinUrl);
             }
         }
+
         $realpath = realpath($this->getModulePath() . DS . $path);
         if (!is_dir($realpath)) {
             $realpath = $path;
