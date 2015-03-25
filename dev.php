@@ -4,6 +4,7 @@ if (
     strpos($_SERVER['SCRIPT_NAME'], 'composer') !== false
     || strpos($_SERVER['SCRIPT_NAME'], 'magerun') !== false
     || strpos($_SERVER['SCRIPT_NAME'], 'cron.php') !== false
+    || strpos($_SERVER['SCRIPT_NAME'], 'install.php') !== false
 ) {
     return;
 }
