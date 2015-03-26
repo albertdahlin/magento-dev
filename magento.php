@@ -63,6 +63,7 @@ class dahl_dev
         }
         $this->_readConfigFiles();
         $this->_initSetup();
+        $this->_config->loadExternalModules();
     }
 
     /**
