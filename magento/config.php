@@ -62,7 +62,7 @@ class dahl_dev_config
     {
         if (is_array($path)) {
             foreach ($path as $p) {
-                return $this->enableExternal($p, $skinUrl);
+                $this->enableExternal($p, $skinUrl);
             }
         }
 
@@ -80,7 +80,7 @@ class dahl_dev_config
     {
         if (is_array($path)) {
             foreach ($path as $p) {
-                return $this->disableExternal($p, $skinUrl);
+                $this->disableExternal($p);
             }
         }
         unset($this->_registeredModules[$path]);
