@@ -53,7 +53,7 @@ class dahl_dev_config
     /**
      * Register external module to be loaded
      * 
-     * @param string $path  The path to the root where files are located.
+     * @param string|array $path  The path to the root where files are located.
      * @param stirng $url   An url from where static files can be loaded.
      * @access public
      * @return void
@@ -66,13 +66,15 @@ class dahl_dev_config
             }
         }
 
-        $this->_registeredModules[$path] = $skinUrl;
+        if (is_string($path)) {
+            $this->_registeredModules[$path] = $skinUrl;
+        }
     }
 
     /**
      * Unregister external module to be loaded
      * 
-     * @param string $path  The path to the root where files are located.
+     * @param string|array $path  The path to the root where files are located.
      * @access public
      * @return void
      */
@@ -83,7 +85,10 @@ class dahl_dev_config
                 $this->disableExternal($p);
             }
         }
-        unset($this->_registeredModules[$path]);
+
+        if (is_string($path)) {
+            unset($this->_registeredModules[$path]);
+        }
     }
 
     /**
