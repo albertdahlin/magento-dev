@@ -1,9 +1,6 @@
 <?php
 define('DAHL_DEVROOT', dirname(__file__));
-if (
-    strpos($_SERVER['SCRIPT_NAME'], 'composer') !== false
-    || strpos($_SERVER['SCRIPT_NAME'], 'magerun') !== false
-    || strpos($_SERVER['SCRIPT_NAME'], 'cron.php') !== false
+if (strpos($_SERVER['SCRIPT_NAME'], 'cron.php') !== false
     || strpos($_SERVER['SCRIPT_NAME'], 'install.php') !== false
 ) {
 
