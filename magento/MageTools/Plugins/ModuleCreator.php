@@ -366,7 +366,7 @@ class ModuleCreator
                         if (strpos($model->getName(),'_resource')) {
                             $config['options']['r'] = true;
                         } else {
-                            $config['identifier']   = $module->getName();
+                            $config['identifier']   = $model->getName();
                             $config['options']['m'] = true;
                         }
                     }
