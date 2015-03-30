@@ -3,6 +3,8 @@ define('DAHL_DEVROOT', dirname(__file__));
 if (strpos($_SERVER['SCRIPT_NAME'], 'cron.php') !== false
     || strpos($_SERVER['SCRIPT_NAME'], 'install.php') !== false
 ) {
+    return;
+}
 
 /**
  * Will on only execute if it is a PHP process and not a phar file or
