@@ -170,6 +170,7 @@ TEXT;
                 $product = \Mage::getModel('catalog/product')
                     ->setData($defaultData)
                     ->setName($productName)
+                    ->setPrice(mt_rand(10, 1000))
                     ->setSku(substr(md5(microtime()), 0, 8))
                     ->setStockData($stockData)
                     ->save();
