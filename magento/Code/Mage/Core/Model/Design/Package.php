@@ -7,6 +7,7 @@
 $versionInfo = Mage::getVersionInfo();
 if ($versionInfo['major'] == 1) {
     switch ($versionInfo['minor']) {
+        case 5:
         case 6:
             include('package-original1602.php');
             break;
