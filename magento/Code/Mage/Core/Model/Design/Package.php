@@ -14,6 +14,9 @@ if ($versionInfo['major'] == 1) {
         case 7:
             include('package-original1702.php');
             break;
+        case 8:
+            include('package-original18xx.php');
+            break;
         case 9:
             include('package-original191.php');
             break;
