@@ -183,15 +183,23 @@ class dahl_dev_config
      */
     protected function _collectStaticFiles($rootPath, $url)
     {
-        $design = $rootPath . DS . 'app' . DS . 'design' . DS;
-        $locale = $rootPath . DS . 'app' . DS . 'locale' . DS;
-        $js     = $rootPath . DS . 'js' . DS;
-        $skin   = $rootPath . DS . 'skin' . DS;
+        $design     = $rootPath . DS . 'app' . DS . 'design' . DS;
+        $locale     = $rootPath . DS . 'app' . DS . 'locale' . DS;
+        $js         = $rootPath . DS . 'js' . DS;
+        $skin       = $rootPath . DS . 'skin' . DS;
+        $lib        = $rootPath . DS . 'lib' . DS;
+        $local      = $rootPath . DS . 'app' . DS . 'code' . DS . 'local' . DS;
+        $community  = $rootPath . DS . 'app' . DS . 'code' . DS . 'community' . DS;
+        $core       = $rootPath . DS . 'app' . DS . 'code' . DS . 'core' . DS;
 
         $this->_collectAllFiles($design, 'design');
         $this->_collectAllFiles($locale, 'locale');
         $this->_collectAllFiles($js, 'js', $url . '/js/');
         $this->_collectAllFiles($skin, 'skin', $url . '/skin/');
+        $this->_collectAllFiles($lib, 'lib');
+        $this->_collectAllFiles($local, 'local');
+        $this->_collectAllFiles($community, 'community');
+        $this->_collectAllFiles($core, 'core');
     }
 
     /**
@@ -299,6 +307,25 @@ class dahl_dev_config
     {
         $root            = (string)$module->rootDir;
         $module->codeDir = $root . DS . 'app' . DS . 'code';
+    }
+
+    /**
+     * Returns an external class file if it exists.
+     *
+     * @param string $file
+     * @access public
+     * @return string
+     */
+    public function getClassFile($file)
+    {
+        $includePaths = array('local', 'community', 'core', 'lib');
+        foreach ($includePaths as $path) {
+            if (isset($this->_staticFiles[$path], $this->_staticFiles[$path][$file])) {
+                return $this->_staticFiles[$path][$file];
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -118,20 +118,13 @@ class dahl_dev
      */
     public function autoload($class)
     {
-        $class = explode(' ', ucwords(str_replace('_', ' ', $class)));
-        if (count($class) > 2) {
-            $moduleName = implode('_', array($class[0], $class[1]));
-            $config     = $this->_config;
-            $codeDir    = $config->getModuleData($moduleName, 'codeDir');
+        $class      = explode(' ', ucwords(str_replace('_', ' ', $class)));
+        $classFile  = implode(DS, $class) . '.php';
+        $config     = $this->_config;
+        $file       = $config->getClassFile($classFile);
 
-            if ($codeDir) {
-                $codePool  = $config->getModuleData($moduleName, 'codePool');
-                $classFile = $codeDir . DS . $codePool . DS . implode(DS, $class);
-                $classFile .= '.php';
-                if (is_file($classFile)) {
-                    return include($classFile);
-                }
-            }
+        if ($file) {
+            return include_once $file;
         }
 
         return false;
