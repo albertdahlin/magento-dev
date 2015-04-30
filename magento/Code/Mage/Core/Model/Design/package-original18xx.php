@@ -25,7 +25,7 @@
  */
 
 
-class Mage_Core_Model_Design_Package
+class original_mage_core_model_design_package
 {
     const DEFAULT_AREA    = 'frontend';
     const DEFAULT_PACKAGE = 'default';
