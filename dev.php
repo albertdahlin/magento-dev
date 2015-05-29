@@ -1,5 +1,12 @@
 <?php
 define('DAHL_DEVROOT', dirname(__file__));
+/**
+ * Put your local includes or changes in local.php
+ */
+if (file_exists(buildPath(DAHL_DEVROOT, 'local.php'))) {
+    include buildPath(DAHL_DEVROOT, 'local.php');
+}
+
 if (strpos($_SERVER['SCRIPT_NAME'], 'cron.php') !== false
     || strpos($_SERVER['SCRIPT_NAME'], 'install.php') !== false
 ) {
@@ -19,12 +26,6 @@ if (PHP_SAPI === 'cli'
 function buildPath() {
     $args = func_get_args();
     return implode(DIRECTORY_SEPARATOR, $args);
-}
-/**
- * Put your local includes or changes in local.php
- */
-if (file_exists(buildPath(DAHL_DEVROOT, 'local.php'))) {
-    include buildPath(DAHL_DEVROOT, 'local.php');
 }
 
 /**

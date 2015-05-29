@@ -67,6 +67,9 @@ class App
             implode('', array_keys($plugins)), 
             array($key::ESC)
         );
+
+        $window->removeElements();
+
         if ($choice == $key::ESC) {
             echo "Exit\n";
             return;
