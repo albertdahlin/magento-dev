@@ -11,11 +11,6 @@ class Purge
         return 'Delete stuff';
     }
 
-    static public function getKey()
-    {
-        return 'd';
-    }
-
     static public function isMageDependant()
     {
         return true;

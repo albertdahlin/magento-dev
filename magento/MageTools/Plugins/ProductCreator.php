@@ -46,18 +46,6 @@ TEXT;
     }
 
     /**
-     * Key identifier.
-     * 
-     * @static
-     * @access public
-     * @return string
-     */
-    static public function getKey()
-    {
-        return 'p';
-    }
-
-    /**
      * Is module Mage dependant.
      * 
      * @static

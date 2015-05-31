@@ -21,16 +21,6 @@ interface PluginInterface
     static public function getTitle();
 
     /**
-     * Should return the keyboard key identifier for starting the plugin.
-     * Has to be unique and not already used.
-     * 
-     * @static
-     * @access public
-     * @return char
-     */
-    static public function getKey();
-
-    /**
      * Return true if the plugin needs a bootstraped Magento to work,
      * false if it can be run standalone from Magento.
      * 
