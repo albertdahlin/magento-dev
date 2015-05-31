@@ -48,36 +48,27 @@ class App
         $window->addElement('1')
             ->setStyle('middle: 50%; text-align: center;')
             ->setText("\nMAGE TOOLS\n \nSelect an option from the list below:\n");
-        $list = '';
-        foreach ($plugins as $idx => $class) {
-            $list .=  "[{$idx}]    {$class::getTitle()}\n";
-        }
 
-        $window->addElement('2')
-            ->setStyle('middle: 50%')
-            ->setText($list);
-
-        $window->addElement('3')
-            ->setStyle('position: fixed; bottom: 0; left: 0')
-            ->setText("Select tool or \"ESC\" to exit: ");
+        $options = $window->addElement('2', 'Options')
+            ->setStyle('middle: 50%; position: fixed; top: 5;')
+            ->setOptions($plugins);
 
         $window->render();
 
-        $choice = $input->readChar(
-            implode('', array_keys($plugins)), 
-            array($key::ESC)
-        );
-        if ($choice == $key::ESC) {
+        $className = $options->getOption();
+
+        if ($className === null) {
             echo "Exit\n";
             return;
         }
-        echo $choice . "\n";
-        $plugins[$choice]::setWindow($window);
+        $className::setWindow($window);
         try {
-            $plugins[$choice]::run();
+            $className::run();
         } catch (AbortException $e) {
+            $output->bottom()->home();
             echo $e->getMessage() . "\n";
         } catch (Exception $e) {
+            $output->bottom()->home();
             echo $e->getMessage() . "\n";
         }
     }
@@ -126,10 +117,10 @@ class App
 
             if ($className::isMageDependant()) {
                 if ($isMage) {
-                    $classes[$className::getKey()] = $className;
+                    $classes[$className] = $className::getTitle();
                 }
             } else {
-                $classes[$className::getKey()] = $className;
+                $classes[$className] = $className::getTitle();
             }
         }
 
