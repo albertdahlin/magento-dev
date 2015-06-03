@@ -180,3 +180,10 @@ class dahl_dev
  * Bootstrap dev app.
  */
 dahl_dev::init();
+
+if (
+    strpos($_SERVER['SCRIPT_NAME'], 'cron.php') !== false
+) {
+    include buildPath(DAHL_DEVROOT, 'magento', 'cron.php');
+    exit();
+}

@@ -1,7 +1,7 @@
 <?php
 define('DAHL_DEVROOT', dirname(__file__));
-if (strpos($_SERVER['SCRIPT_NAME'], 'cron.php') !== false
-    || strpos($_SERVER['SCRIPT_NAME'], 'install.php') !== false
+if (
+    strpos($_SERVER['SCRIPT_NAME'], 'install.php') !== false
 ) {
     return;
 }
@@ -42,7 +42,6 @@ if (isset($_SERVER['PWD']) && !defined('DAHL_MAGEROOT')) {
         define('DAHL_MAGEROOT', dirname($_SERVER['PWD']));
     }
 }
-
 if (defined('DAHL_MAGEROOT')) {
     include buildPath(DAHL_DEVROOT, 'magento.php');
 } else {
