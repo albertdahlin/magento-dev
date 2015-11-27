@@ -16,8 +16,10 @@ class Zend_Log_Writer_Stream
 
     public function write($message)
     {
-        $line = "\033[32;1m=== " . $this->_logFileStream . " ===\033[39;0m\n";
-        @fwrite($this->_stream, $line);
+        if ($this->_logFileStream) {
+            $line = "\033[32;1m=== " . $this->_logFileStream . " ===\033[39;0m\n";
+            @fwrite($this->_stream, $line);
+        }
 
         parent::write($message);
     }
